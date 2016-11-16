@@ -1,0 +1,1 @@
+json.array! @user_requests, partial: 'user_requests/user_request', as: :user_request

@@ -1,0 +1,1 @@
+json.array! @project_submission_pages, partial: 'project_submission_pages/project_submission_page', as: :project_submission_page

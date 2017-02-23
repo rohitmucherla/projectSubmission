@@ -3,17 +3,17 @@
 ### Ruby: 2.3.1
 ### Rails: 5.0.0.1
 
-### Node: LTS (6.10.0)
-#### Packages: See [package.json](./package.json)
+### Node: LTS (~6.10.0)
+#### Node Packages: See [package.json](./package.json)
 
-# Install
-## NodeJS
+## Install
+### NodeJS
 ```bash
 npm install
 ```
 
-#Test
-## NodeJS
+## Run
+### NodeJS
 ```bash
 npm start
 ```

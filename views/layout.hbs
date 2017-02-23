@@ -1,10 +1,48 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>{{title}}</title>
-    <link rel='stylesheet' href='/css/global.css' />
-  </head>
-  <body>
-    {{{body}}}
-  </body>
+<!DOCTYPE HTML>
+<html lang="en" prefix="og: http://ogp.me/ns#">
+	<head>
+		<title>{{#if title}}{{title}} | {{/if}}Aggie Coding Club Project Manager</title>
+		<meta charset="utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0"/>
+		<meta name="theme-color" content="#ffffff" />
+		<meta name="msapplication-tap-highlight" content="no" />
+		<meta name="msapplication-TileImage" content="/mstile-150x150.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="application-name" content="Aggie Coding Club Project Manager" />
+		<meta name="mobile-web-app-capable" content="yes" />
+		<meta property="og:url" content="https://projects.aggiecodingclub.com" />
+		<meta property="og:site_name" content="Aggie Coding Club Project Manager" />
+		<meta property="og:type" content="article" />
+		<meta property="og:locale" content="en_US" />
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:site" content=";;;INSERT_TWITTER_HANDLE_HERE;;;" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="white">
+		<meta name="apple-mobile-web-app-title" content="Aggie Coding Club Project Manager">
+
+		<link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+		<link rel="stylesheet" type="text/css" href="/material/css/materialize.min.css" media="screen,projection"/>
+		<link rel="stylesheet" type="text/css" href="/css/global.css" media="screen,projection"/>
+		<!--<link rel="author" type="text/plain" href="/humans.txt" />-->
+		<!--<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+		<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32" />
+		<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16" />
+		<link rel="manifest" href="/manifest.json" />
+		<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+		<link rel="alternate" type="application/atom+xml" title="Aggie Coding Club" href="/atom.xml" />
+		<link rel="shortcut icon" href="/favicon.ico" />-->
+		<link rel="canonical" href="https://projects.aggiecodingclub.com">
+
+		{{#if description}}
+		<meta name="description" content="{{description}}" />
+		<meta name="og:description" content="{{description}}" />
+		{{/if}}
+	</head>
+	<body>
+		{{{body}}}
+	</body>
+	<script src="/js/jquery.js"></script>
+	<script src="/material/js/materialize.min.js"></script>
 </html>

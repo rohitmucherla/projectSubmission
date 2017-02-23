@@ -1,0 +1,27 @@
+{
+  "name": "projectsubmission",
+  "version": "0.0.0",
+  "description": "Project Management Platform for Aggie Coding Club",
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rohitmucherla/projectSubmission.git"
+  },
+  "author": "Vikas Potluri,Gabriel Stella, Everett Yang, Robert Shannon, Matthew Goodman",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/rohitmucherla/projectSubmission/issues"
+  },
+  "homepage": "https://github.com/rohitmucherla/projectSubmission#readme",
+  "dependencies": {
+    "body-parser": "~1.16.0",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.0",
+    "express": "~4.14.1",
+    "hbs": "~4.0.1",
+    "morgan": "~1.7.0",
+    "serve-favicon": "~2.3.2"
+  }
+}

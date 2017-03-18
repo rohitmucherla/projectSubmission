@@ -1,0 +1,1 @@
+/*Global javascript - scripts that are used on most pages*/

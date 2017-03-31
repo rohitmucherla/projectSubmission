@@ -1,2 +1,0 @@
-class ProjectSubmissionPage < ApplicationRecord
-end

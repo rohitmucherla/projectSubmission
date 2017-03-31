@@ -1,1 +1,0 @@
-json.partial! "project_submission_pages/project_submission_page", project_submission_page: @project_submission_page

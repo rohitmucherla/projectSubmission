@@ -5,6 +5,7 @@ const express = require('express'),
 	cookieParser = require('cookie-parser'),
 	bodyParser = require('body-parser'),
 	session = require('express-session'),
+	flash = require('express-flash'),
 	passport = require('passport');
 
 /*
@@ -37,6 +38,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 //parses cookies
 app.use(cookieParser());
+//Display flash messages
+app.use(flash());
 //Everything in the public folder can be requested directly
 app.use(express.static(path.join(__dirname, 'public')));
 

@@ -6,7 +6,8 @@ const express = require('express'),
 	router = express.Router(),
 	config = require('../config'), //Global Configuration
 	mongoose = require('mongoose'), //Database
-	User = require('../user'); //User Database Schema
+	User = require('../user'), //User Database Schema
+	Apps = require('../application');
 
 
 router.use(checkYoSelf); //Ensure user is logged in and can be in the admin area before doing anything
@@ -57,13 +58,15 @@ router.get('/user/:id/approve',function(req,res)
 		{
 			if(user.approved)
 			{
-				res.render('index',{flash:`${user.name} is already approved!`});
+				req.flash('error',`${user.name} is already approved!`)
+				res.render('index');
 			}
 			else
 			{
 				user.approved = true;
 				user.save();
-				res.render('index',{flash:`User ${user.name} approved!`});
+				req.flash('success',`User ${user.name} approved!`)
+				res.render('index');
 			}
 		}
 		else
@@ -79,8 +82,37 @@ router.get('/user/:id/delete',function(req,res)
 	User.findOne({'gid':req.params.id}).remove(function(error,b)
 	{
 		//@todo: Error checking
-		res.render('index',{flash:"Deleted User."});
+		req.flash('success','Deleted User');
+		res.render('index');
 	})
+});
+
+router.get('/projects',function(req,res)
+{
+	res.send('Project for loop');
+});
+
+router.get('/project/:id',function(req,res)
+{
+	res.send('Single project info page');
+});
+
+router.get('/projects/unapproved',function(req,res)
+{
+	res.send('Projects that people submit but aren\'t approved');
+});
+
+router.get('/projects/assigner',function(req,res)
+{
+	Apps.find({}).limit(10).then(function(app)
+	{
+		console.log(app);
+		app.forEach(function(a,b,c)
+		{
+			console.warn(a,b,c);
+		});
+		res.render('admin-project-assigner',{apps:app});
+	});
 });
 
 function checkYoSelf(req,res,next)

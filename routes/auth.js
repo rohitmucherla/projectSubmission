@@ -29,4 +29,11 @@ router.get('/google/callback',
 	}
 );
 
+router.get('/logout',function(req,res)
+{
+	req.logout();
+	req.flash('success','You have been logged out');
+	res.redirect('/');
+});
+
 module.exports = router;

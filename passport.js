@@ -14,7 +14,6 @@ module.exports = function(passport) // make modifications to the passport object
 	// used to serialize the user for the session
 	passport.serializeUser(function(user, done)
 	{
-		console.log('serialize()');
 		done(null, user.id);
 	});
 
@@ -23,7 +22,6 @@ module.exports = function(passport) // make modifications to the passport object
 	{
 		User.findById(id, function(err, user)
 		{
-			console.log('deserialize');
 			done(err, user);
 		});
 	});

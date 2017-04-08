@@ -33,13 +33,13 @@ var projectSchema = mongoose.Schema(
 		type: Array,
 		required: false
 	},
-	created
+	created:
 	{
 		type: Date,
 		required: true,
 		min: Date.now
 	},
-	end
+	end:
 	{
 		type: Date,
 		required: false,
@@ -50,7 +50,7 @@ var projectSchema = mongoose.Schema(
 		required: false,
 		type: Array
 	},
-	github-url
+	"github-url":
 	{
 		type: mongoose.SchemaTypes.Url,
 		required: false
@@ -58,7 +58,7 @@ var projectSchema = mongoose.Schema(
 	status:
 	{
 		required: true,
-		defaullt: 0,
+		default: 0,
 		type: Number,
 		min:-1,
 		max: 1

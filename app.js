@@ -44,7 +44,7 @@ app.use(flash());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //Express session handling
-app.use(session({secret:"WhyNot",saveUninitialized:false,resave:false}));
+app.use(session({secret:"WhyNot",saveUninitialized:false,resave:false,signed:true}));
 //Use passport
 app.use(passport.initialize());
 //Passport session manager
@@ -60,6 +60,13 @@ app.use('/project', project);
 app.use('/auth', auth);
 app.use('/profile', profile);
 app.use('/admin', admin);
+app.get('/login', function(req,res)
+{
+	if(req.user)
+		res.redirect('/profile');
+	else
+		res.redirect('/auth/google');
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

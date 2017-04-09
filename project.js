@@ -3,8 +3,14 @@ require('mongoose-type-url'); //Adds URL to available `type`
 
 var projectSchema = mongoose.Schema(
 {
-	id: {type: String, unique: true},
-	name: String,
+	//id: {type: mongoose.SchemaTypes.ObjectId, unique: true},
+	name:
+	{
+		type: String,
+		min : [2, "I can make a better name than that"],
+		max: [30, "Leave the indepthness to the description"],
+		required: true
+	},
 	description:
 	{
 		type:String,

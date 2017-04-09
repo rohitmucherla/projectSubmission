@@ -6,6 +6,7 @@ const express = require('express'),
 	bodyParser = require('body-parser'),
 	session = require('express-session'),
 	flash = require('express-flash'),
+	expressValidator = require('express-validator'),
 	passport = require('passport');
 
 /*
@@ -13,7 +14,7 @@ const express = require('express'),
 */
 
 var index = require('./routes/index');
-var createProject = require('./routes/create-project');
+var lang = require('./routes/lang');
 var project = require('./routes/project');
 var auth = require('./routes/auth');
 var profile = require('./routes/profile');
@@ -42,7 +43,34 @@ app.use(cookieParser());
 app.use(flash());
 //Everything in the public folder can be requested directly
 app.use(express.static(path.join(__dirname, 'public')));
+//Form Validation
+app.use(expressValidator(
+{
+	customValidators: {
+		isArray: function(value){
+			return Array.isArray(value);
+		},
+		between(value,min,max)
+		{
+			return (parseInt(value) >= min && parseInt(value) <= max);
+		}
+	},
+	customSanitizers: {
+		escapeAndTrim(what)
+		{
+			//escape code
+			what = what.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\//g, '&#x2F;').replace(/\\/g, '&#x5C;').replace(/`/g, '&#96;');
+			var idx = what.length - 1, pattern = new RegExp("/\s/");
+			while (idx >= 0 && pattern.test(what[idx]))
+			{
+				idx--;
+			}
 
+			what = idx < what.length ? what.substr(0, idx + 1) : what;
+			return what.replace(/^\s+/g, '');
+		}
+	}
+}));
 //Express session handling
 app.use(session({secret:"WhyNot",saveUninitialized:false,resave:false,signed:true}));
 //Use passport
@@ -55,7 +83,7 @@ app.use(passport.session());
 */
 
 app.use('/', index);
-app.use('/create-project', createProject);
+app.use('/lang', lang);
 app.use('/project', project);
 app.use('/auth', auth);
 app.use('/profile', profile);

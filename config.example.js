@@ -22,7 +22,8 @@ var config =
 					connectTimeoutMS :30000
 				}
 			}
-		}
+		},
+		promiseLibrary: require('bluebird')
 	},
 	google:
 	{

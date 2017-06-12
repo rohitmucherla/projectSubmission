@@ -40,13 +40,23 @@
 		<meta name="og:description" content="{{description}}" />
 		{{/if}}
 	</head>
-	<body>
-		<div id="flashes" class="center">
-			<div class="message success green-text">{{messages.success}}</div>
-			<div class="message info yellow-text text-darken-4">{{messages.info}}</div>
-			<div class="message error red-text">{{messages.error}}</div>
-		</div>
-		{{{body}}}
+	<body class="grey lighten-3">
+		<header>
+			<nav class="red darken-4">
+				<div class="container">
+					<a class="right" href="/login">{{#if user}}Welcome back, {{user.name.first}}{{else}}Login{{/if}}</a>
+				</div>
+			</nav>
+		</header>
+		<main>
+			<div id="flashes" class="center">
+				<div class="message success green-text">{{messages.success}}</div>
+				<div class="message info yellow-text text-darken-4">{{messages.info}}</div>
+				<div class="message error red-text">{{messages.error}}</div>
+			</div>
+			{{{body}}}
+		</main>
+		<footer></footer>
 	</body>
 	<script src="/js/jquery.js"></script>
 	<script src="/material/js/materialize.min.js"></script>

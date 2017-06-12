@@ -1,4 +1,9 @@
+<!--Error-->
 <p>Error</p>
 <h1>{{message}}</h1>
-<h2>{{error.status}}</h2>
-<pre>{{error.stack}}</pre>
+{{#if error.status}}
+	<h2>{{error.status}}</h2>
+	<pre>{{error.stack}}</pre>
+{{else}}
+	<pre>{{error}}</pre>
+{{/if}}

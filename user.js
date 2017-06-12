@@ -5,7 +5,12 @@ var userSchema = mongoose.Schema(
 	//id: {type: String, unique: true},
 	gid: String, //GoogleID
 	token: String,
-	name: String,
+	name:
+	{
+		first: String,
+		last: String,
+		full: String
+	},
 	company: String,
 	access: {required:true, type:Number, default: 0},
 	email: String,

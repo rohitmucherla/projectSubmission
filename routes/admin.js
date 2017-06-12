@@ -38,7 +38,13 @@ router.get('/users/unverified',function(req,res)
 //Display the profile of user `id`; the `:` denotes a variable (stored in req.params)
 router.get('/user/:id/',function(req,res)
 {
-	res.render('index');
+	User.findOne({gid:req.params.id},function(error,user)
+	{
+		if(error)
+			res.render('error',{error:error});
+		else
+			res.render('admin-user-single',{user:user});
+	})
 });
 
 //Display projects of user `id`

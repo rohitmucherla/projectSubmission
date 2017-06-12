@@ -55,7 +55,10 @@ module.exports = function(passport) // make modifications to the passport object
 						{
 							user.token = token; //update token
 							user.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-							user.name  = profile.displayName; //update name
+							//update name
+							user.name.first = profile.name.givenName;
+							user.name.last = profile.name.familyName;
+							user.name.full = profile.displayName
 							user.pic  = profile.photos[0].value; //update pic
 
 							user.save(function(err) //save
@@ -74,7 +77,10 @@ module.exports = function(passport) // make modifications to the passport object
 						newUser.gid    = profile.id; //set Google id
 						newUser.token = token; //Access token
 						newUser.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-						newUser.name  = profile.displayName; //Full name
+						newUser.name.first = profile.name.givenName;
+						newUser.name.last = profile.name.familyName;
+						newUser.name.full = profile.displayName;
+
 						newUser.pic  = profile.photos[0].value; //Profile picture
 
 						newUser.save(function(err) //save the user
@@ -94,7 +100,9 @@ module.exports = function(passport) // make modifications to the passport object
 				user.id    = profile.gid; //Set Google ID
 				user.token = token; //Access token
 				user.email = (profile.emails[0].value || '').toLowerCase(); // pull the first email
-				user.name  = profile.displayName; //Full name
+				user.name.first = profile.name.givenName;
+				user.name.last = profile.name.familyName;
+				user.name.full = profile.displayName;
 				user.pic  = profile.photos[0].value; //Profile picture
 
 				user.save(function(err) //save

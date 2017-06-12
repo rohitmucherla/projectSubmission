@@ -1,0 +1,46 @@
+<div class="application-container section">
+	{{#each applications}}
+		<div class="container section application">
+			<div class="card">
+				<div class="card-content">
+					<div class="row">
+						<div class="col s12 center m4 push-m8">
+							<a class="flow-text btn red" href="/project/{{this.project-id}}">View Project</a>
+						</div>
+						<div class="col s12 m4 offset-m4 pull-m4">
+							<h2 class="flow-text center underlined"><strong>{{this.projectName}}</strong></h2>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s12 m6 l4 center">
+							<p class="flow-text">Interest: [<span class="underlined">{{this.level-of-interest}}</span> / 10]</p>
+						</div>
+						<div class="col s12 m6 l4 center">
+							<p class="flow-text">Availability: <span class="underlined">{{this.time}}</span> hours</p>
+						</div>
+						<div class="col s12 m6 l4 offset-m3 center">
+							<p class="flow-text">Skill ranking: [<span class="underlined">{{this.skills}}</span> / 100]</p>
+						</div>
+					</div>
+					<div class="row">
+						<h2 class="flow-text center underlined">Notes</h2>
+						<p class="flow-text center">{{#if this.notes}}{{this.notes}}{{else}}[No notes]{{/if}}</p>
+					</div>
+					<div class="row">
+						{{#if this.status}}
+							Status: {{this.status}}
+						{{/if}}
+						{{#if this.statusNotes}}
+							Info: {{this.statusNotes}}
+						{{/if}}
+					</div>
+					<div class="row center">
+						<p class="flow-text">See a problem? <a href="/profile/application/{{this.identifier}}/edit" class="btn">Edit Application</a></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	{{/each}}
+</div>
+{{#if pagination.needed}}
+{{/if}}

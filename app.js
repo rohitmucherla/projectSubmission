@@ -13,12 +13,13 @@ const express = require('express'),
 * Load Routes
 */
 
-var index = require('./routes/index');
-var lang = require('./routes/lang');
-var project = require('./routes/project');
-var auth = require('./routes/auth');
-var profile = require('./routes/profile');
-var admin = require('./routes/admin');
+var index = require('./routes/index'),
+	lang = require('./routes/lang'),
+	project = require('./routes/project'),
+	projects = require('./routes/projects'),
+	auth = require('./routes/auth'),
+	profile = require('./routes/profile'),
+	admin = require('./routes/admin');
 
 //Create express app
 var app = express();
@@ -78,6 +79,12 @@ app.use(passport.initialize());
 //Passport session manager
 app.use(passport.session());
 
+app.use(function(req, res, next)
+{
+	res.locals.user = req.user;
+	next();
+});
+
 /*
 * Routes
 */
@@ -85,6 +92,7 @@ app.use(passport.session());
 app.use('/', index);
 app.use('/lang', lang);
 app.use('/project', project);
+app.use('/projects', projects);
 app.use('/auth', auth);
 app.use('/profile', profile);
 app.use('/admin', admin);

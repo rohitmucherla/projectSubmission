@@ -1,0 +1,35 @@
+{{user}};
+<div class="container section">
+	<div class="card">
+		<div class="card-title">
+			<h1 class="center">
+				<img src="{{user.pic}}" alt="{{user.name}}'s profile pic" class="circle" />
+				{{user.name}}
+			</h1>
+		</div>
+		<div class="card-content">
+			<div class="section" id="meta">
+				<h2>Meta</h2>
+				{{#if user.approved}}
+					<p class="green-text flow-text">Approved</p>
+				{{else}}
+					<p class="red-text flow-text">Not approved. <a href="./approve">Approve</a>?</p>
+				{{/if}}
+				{{#if user.access}}
+					<p class="flow-text">Access level: {{user.access}}</p>
+				{{else}}
+					<p class="error flow-text">ERROR: ACCESS LEVEL UNKNOWN</p>
+				{{/if}}
+				<p class="flow-text">Profile is {{#unless user.profileComplete}}in{{/unless}}complete
+			</div>
+			<div class="section" id="projects">
+				<h2>Projects</h2>
+				{{#each user.projects}}
+					{{user.projects}}
+				{{else}}
+					No projects
+				{{/each}}
+			</div>
+		</div>
+	</div>
+</div>

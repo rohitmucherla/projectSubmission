@@ -17,7 +17,7 @@ router.get('/',function(req, res)
 
 router.get('/applications',function(req,res)
 {
-	Application.count().exec().then(function(number)
+	Application.count().lean().exec().then(function(number)
 	{
 		if(number > 0)
 		{
@@ -33,7 +33,7 @@ router.get('/applications',function(req,res)
 					console.log(app);
 					projects.push(app["project-id"]);
 				});
-				Project.find().where('id').in(projects).select('name id').exec().then(function(project)
+				Project.find().lean().where('id').in(projects).select('name id').exec().then(function(project)
 				{
 					_projects = {};
 					sendApp = [];
@@ -65,9 +65,47 @@ router.get('/application/:id',function(req,res)
 	res.redirect(`/profile/application/${req.params.id}/view`);
 });
 
+router.get('/application/:id/view',function(req,res)
+{
+	Application.findOne()
+		.lean()
+		.where('identifier').in(req.params.id)
+		.where('user-id').in(req.user.gid)
+		.exec()
+		.then(function(application)
+	{
+		console.log(application);
+		if(application)
+		{
+			Project.findOne()
+				.lean()
+				.where('id')
+				.in(application["project-id"])
+				.select('name')
+				.exec()
+				.then(function(project)
+			{
+				application.projectName = project.name;
+				res.locals.pagination = {needed:false};
+				res.locals.applications = [application];
+				res.render('profile-application-list');
+			}).catch((error)=>{res.status(500).render('error',{error:error})});
+		}
+		else
+		{
+			res.render('application-404',{single:true});
+		}
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
+});
+
 router.get('/application/:id/edit',function(req,res)
 {
-	Application.findOne().where('user-id').in(req.user.gid).where('project-id').in(req.params.id).exec().then(function(application)
+	Application.findOne()
+		.lean()
+		.where('identifier').in(req.params.id)
+		.where('user-id').in(req.user.gid)
+		.exec()
+		.then(function(application)
 	{
 		if(application)
 		{
@@ -77,8 +115,8 @@ router.get('/application/:id/edit',function(req,res)
 		{
 			res.render('application-404',{single:true})
 		}
-	})
-})
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
+});
 
 function checkLogin(req,res,next)
 {

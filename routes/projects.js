@@ -4,70 +4,101 @@ const express = require('express'),
 const LIMIT = 10;
 
 var Project = require('../project'),
-	projectSchema = require('mongoose').model('Project').schema;
+	Applicaton = require('../application');
 
 router.use(checkLogin);
 
 router.get('/',function(req, res)
 {
-	//Get the number of projects in the db
-	//note: this is not an expensive calculation
-	Project.count().exec().then(function(number)
+	Application.find().where('user-id').in(req.user.gid).select('project-id identifier').lean().exec().then(function(e)
 	{
-		//No projects found
-		if(number <= 0)
+		applied = [];
+		e.forEach(function(app)
 		{
-			res.render('project-404');
-		}
-		else
+			applied[app["project-id"]] = app["identifier"];
+		});
+		//Get the number of projects in the db
+		//note: this is not an expensive calculation
+		Project.count().lean().exec().then(function(number)
 		{
-			//Get the first LIMIT projects
-			Project.find().limit(LIMIT).exec().then(function(projects)
+			//No projects found
+			if(number <= 0)
 			{
-				//Figure out if we need to paginate, and update pagination info
-				res.locals.pagination = (number > LIMIT) ?
-					{needed:true, number: Math.ceil(number / LIMIT), current:1} :
-					{needed:false};
-				//set the projects
-				res.locals.projects = projects;
-				//render the projects
-				res.render('project-listing');
-			}).catch((error)=>{res.status(500).render('error',{error:error})});
-		}
-	}).catch((error)=>{res.status(500).render('error',{error:error})});
+				res.render('project-404');
+			}
+			else
+			{
+				//Get the first LIMIT projects
+				Project.find().limit(LIMIT).lean().exec().then(function(projects)
+				{
+					projects.forEach(function(project,index)
+					{
+						console.log(applied[project.id]);
+						if(applied[project.id])
+							project.applied = applied[project.id];
+						projects[index] = project;
+					});
+					//Figure out if we need to paginate, and update pagination info
+					res.locals.pagination = (number > LIMIT) ?
+						{needed:true, number: Math.ceil(number / LIMIT), current:1} :
+						{needed:false};
+					//set the projects
+					res.locals.projects = projects;
+					//render the projects
+					res.render('project-listing');
+				}).catch((error)=>{res.status(500).render('error',{error:error})});
+			}
+		}).catch((error)=>{res.status(500).render('error',{error:error})});
+	});
 });
 
 router.get('/:offset',function(req,res)
 {
-	//First get the number
-	Project.count().exec().then(function(err,number)
+	Application.find().where('user-id').in(req.user.gid).select('project-id identifier').lean().exec().then(function(e)
 	{
-		//See if there are any projects in this offset
-		maxNumPages = Math.ceil(number / LIMIT);
-		if(offset > maxNumPages)
-			res.render('project-404');
-		//there are!
-		else
+		applied = [];
+		e.forEach(function(app)
 		{
-			//We don't want the previous page projects.
-			Project.skip(LIMIT * req.params.offset)
-				.limit(LIMIT)
-				.find()
-				.exec()
-				.then(function(errr,projects)
+			applied[app["project-id"]] = app["identifier"];
+		});
+		//First get the number
+		Project.count().lean().exec().then(function(err,number)
+		{
+			//See if there are any projects in this offset
+			maxNumPages = Math.ceil(number / LIMIT);
+			if(offset > maxNumPages)
+				res.render('project-404');
+			//there are!
+			else
 			{
-				//We're definitely going to need pagination!
-				//@todo: implement pagination
-				res.locals.pagination =
+				//We don't want the previous page projects.
+				Project.skip(LIMIT * req.params.offset)
+					.limit(LIMIT)
+					.find()
+					.lean()
+					.exec()
+					.then(function(errr,projects)
 				{
-					needed:true,
-					number: Math.ceil(number / LIMIT),
-					current: req.params.offset // already known
-				};
-				res.locals.projects = projects;
-				res.render('project-listing');
-			}).catch((error)=>{res.status(500).render('error',{error:error})});
-		}
+					projects.forEach(function(project,index)
+					{
+						console.log(applied[project.id]);
+						if(applied[project.id])
+							project.applied = applied[project.id];
+						projects[index] = project;
+					});
+					//We're definitely going to need pagination!
+					//@todo: implement pagination
+					res.locals.pagination =
+					{
+						needed:true,
+						number: Math.ceil(number / LIMIT),
+						current: req.params.offset // already known
+					};
+					res.locals.projects = projects;
+					res.render('project-listing');
+				}).catch((error)=>{res.status(500).render('error',{error:error})});
+			}
+		}).catch((error)=>{res.status(500).render('error',{error:error})});
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 

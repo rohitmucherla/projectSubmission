@@ -21,6 +21,8 @@
 							Languages &amp; Frameworks:
 							{{#each this.languages}}
 								<div class="chip"><a href="/lang/{{this}}" target="_blank">{{this}}</a></div>
+							{{else}}
+								[none]
 							{{/each}}
 						</div>
 					</div>
@@ -31,7 +33,11 @@
 						<p class="flow-text"><span class="title"><strong>Description:</strong></span> {{this.description}}</p>
 					</div>
 					<div class="center section">
-						<p class="flow-text">Interested? <a class="btn waves-effect waves-light" href="/project/{{this._id}}/apply">Apply today!</a></p>
+						{{#if this.applied}}
+						<p class="flow-text">You've applied to this! <a href="/profile/application/{{this.applied}}/view" class="btn">View Application</a></p>
+						{{else}}
+						<p class="flow-text">Interested? <a class="btn waves-effect waves-light" href="/project/{{this.id}}/apply">Apply today!</a></p>
+						{{/if}}
 					</div>
 				</div>
 			</div>

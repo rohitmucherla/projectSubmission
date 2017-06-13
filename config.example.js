@@ -31,11 +31,7 @@ var config =
 		'clientSecret'  : 'secret',
 		'callbackURL'   : 'http://localhost/auth/google/callback'
 	},
-	passwords:
-	{
-		approve: 'APPROVE_THEM',
-		delete: 'Delete them!'
-	}
+	base: ""
 }
 
 module.exports = config

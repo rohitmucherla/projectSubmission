@@ -81,7 +81,7 @@ router.post('/create',function(req,res)
 
 router.get('/:id',function(req,res)
 {
-	Project.findOne({id:req.params.id}).exec().then(function(project)
+	Project.findOne({id:req.params.id}).lean().exec().then(function(project)
 	{
 		res.render('project',{data:project});
 	}).catch(renderError);
@@ -89,7 +89,7 @@ router.get('/:id',function(req,res)
 
 router.get('/:id/apply',function(req,res)
 {
-	Application.findOne({"user-id":req.user.gid,"project-id":req.params.id}).exec().then(function(results)
+	Application.findOne({"user-id":req.user.gid,"project-id":req.params.id}).lean().exec().then(function(results)
 	{
 		if(results)
 		{
@@ -104,7 +104,7 @@ router.get('/:id/apply',function(req,res)
 
 router.post('/:id/apply',function(req,res)
 {
-	Application.findOne({"user-id":req.user.gid,"project-id":req.params.id}).exec().then(function(results)
+	Application.findOne({"user-id":req.user.gid,"project-id":req.params.id}).lean().exec().then(function(results)
 	{
 		if(results)
 		{
@@ -112,7 +112,7 @@ router.post('/:id/apply',function(req,res)
 		}
 		else
 		{
-			Project.find().limit(1).exec().then(function(data)
+			Project.find().limit(1).lean().exec().then(function(data)
 			{
 				if(data.length)
 				{

@@ -21,9 +21,9 @@ var config =
 					keepAlive: 300000,
 					connectTimeoutMS :30000
 				}
-			}
-		},
-		promiseLibrary: require('bluebird')
+			},
+			promiseLibrary: require('bluebird')
+		}
 	},
 	google:
 	{
@@ -31,7 +31,8 @@ var config =
 		'clientSecret'  : 'secret',
 		'callbackURL'   : 'http://localhost/auth/google/callback'
 	},
-	base: ""
+	base: "",
+	port: 4539
 }
 
 module.exports = config

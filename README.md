@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/rohitmucherla/projectSubmission.png?label=ready&title=Ready)](https://waffle.io/rohitmucherla/projectSubmission?utm_source=badge)
 # projectSubmission
 ## Language versions that we're using
 ### Ruby: 2.3.1

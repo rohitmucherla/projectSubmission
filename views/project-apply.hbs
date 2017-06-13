@@ -6,12 +6,15 @@
 		{{/each}}
 	</div>
 {{/if}}
+{{json errors}}
 <div class="container row section">
+	<h1 class="center">Apply for {{project.name}}</h1>
+	<br/>
 	<form method="post" class="col s12" id="project-apply">
 		<div class="row">
 			<div class="range-field col s12 m9">
 				<label for="level-of-interest" class="flow-text">Level of Interest (1-10)<span class="required red-text"> *</span></label>
-				<input required type="range" name="level-of-interest" autocomplete="off" placeholder="" value="{{errors.name.value}}" min="0" max="10"/>
+				<input required type="range" name="level-of-interest" autocomplete="off" placeholder="" value="{{errors.level-of-interest.value}}" min="0" max="10"/>
 			</div>
 			<div class="col s12 m3 input-field">
 				<input required type="number" min="1" max="20" name="availability" class="validate" value="{{errors.number-of-people.value}}"/>

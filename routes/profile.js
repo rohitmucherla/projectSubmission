@@ -30,7 +30,6 @@ router.get('/applications',function(req,res)
 				var projects = [];
 				applications.forEach(function(app)
 				{
-					console.log(app);
 					projects.push(app["project-id"]);
 				});
 				Project.find().lean().where('id').in(projects).select('name id').exec().then(function(project)
@@ -74,7 +73,6 @@ router.get('/application/:id/view',function(req,res)
 		.exec()
 		.then(function(application)
 	{
-		console.log(application);
 		if(application)
 		{
 			Project.findOne()
@@ -120,7 +118,6 @@ router.get('/application/:id/edit',function(req,res)
 
 function checkLogin(req,res,next)
 {
-	console.log('checklogin');
 	//Passport middleware adds user to the req object. If it doesn't exist, the client isn't logged in
 	if(!req.user)
 	{

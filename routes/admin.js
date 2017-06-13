@@ -112,7 +112,6 @@ router.get('/projects/assigner',function(req,res)
 {
 	Apps.find({}).limit(10).then(function(app)
 	{
-		console.log(app);
 		app.forEach(function(a,b,c)
 		{
 			console.warn(a,b,c);

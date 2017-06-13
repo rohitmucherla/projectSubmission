@@ -1,6 +1,7 @@
 const express = require('express'),
 	router = express.Router(),
-	mongoose = require('mongoose');
+	mongoose = require('mongoose'),
+	getSlug = require('speakingurl');
 
 var Project = require('../project'),
 	Application = require('../application'),
@@ -83,11 +84,35 @@ router.get('/:id',function(req,res)
 {
 	Project.findOne({id:req.params.id}).lean().exec().then(function(project)
 	{
-		res.render('project',{data:project});
-	}).catch(renderError);
+		res.redirect(`/project/${req.params.id}-${getSlug(project.name)}/view`);
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
-router.get('/:id/apply',function(req,res)
+router.get('/:id-:name/view',function(req,res)
+{
+	Project.findOne({id:req.params.id}).lean().exec().then(function(project)
+	{
+		if(req.params.name == getSlug(project.name))
+		{
+			req.session.back = {name:project.name,url:`/project/${req.params.id}-${getSlug(project.name)}/view`};
+			res.render('project',{data:project});
+		}
+		else
+		{
+			res.redirect('/project/${req.params.id}-${getSlug(project.name)}/view');
+		}
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
+});
+
+router.get('/:id/view',function(req,res)
+{
+	Project.findOne({id:req.params.id}).lean().exec().then(function(project)
+	{
+		res.redirect(`/project/${req.params.id}-${getSlug(project.name)}/view`);
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
+});
+
+router.get('/:id-:name/apply',function(req,res)
 {
 	Application.findOne({"user-id":req.user.gid,"project-id":req.params.id}).lean().exec().then(function(results)
 	{
@@ -97,12 +122,23 @@ router.get('/:id/apply',function(req,res)
 		}
 		else
 		{
-			res.render('project-apply',{});
+			Project.findOne().where('id').in(req.params.id).lean().exec().then(function(project)
+			{
+				res.render('project-apply',{project:project});
+			}).catch((error)=>{res.status(500).render('error',{error:error})});
 		}
-	}).catch(renderError);
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
-router.post('/:id/apply',function(req,res)
+router.get('/:id/apply',function(req,res)
+{
+	Project.findOne({id:req.params.id}).lean().exec().then(function(project)
+	{
+		res.redirect(`/project/${req.params.id}-${getSlug(project.name)}/apply`);
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
+});
+
+router.post('/:id-:name/apply',function(req,res)
 {
 	Application.findOne({"user-id":req.user.gid,"project-id":req.params.id}).lean().exec().then(function(results)
 	{
@@ -166,14 +202,13 @@ router.post('/:id/apply',function(req,res)
 				{
 					req.render('project-404');
 				}
-			}).catch(renderError)
+			}).catch((error)=>{res.status(500).render('error',{error:error})})
 		}
-	}).catch(renderError);
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
 function checkLogin(req,res,next)
 {
-	console.log('checklogin');
 	//Passport middleware adds user to the req object. If it doesn't exist, the client isn't logged in
 	if(!req.user)
 	{
@@ -191,13 +226,4 @@ function checkLogin(req,res,next)
 			next();
 	}
 }
-
-//We render errors so many times it's easier to make it a function call
-
-function renderError(error)
-{
-	res.status(500).render('error',{error:error});
-	//res.status(200).render('database-error');
-}
-
 module.exports = router;

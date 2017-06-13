@@ -1,4 +1,6 @@
 const express = require('express'),
+	getSlug = require('speakingurl'),
+	hbs = require('hbs'),
 	path = require('path'),
 	//favicon = require('serve-favicon'),
 	logger = require('morgan'),
@@ -8,6 +10,22 @@ const express = require('express'),
 	flash = require('express-flash'),
 	expressValidator = require('express-validator'),
 	passport = require('passport');
+
+/*
+* Register helpers
+*/
+
+hbs.registerHelper('get_slug',function(unslug)
+{
+	return getSlug(unslug);
+});
+
+hbs.registerHelper('json',function(obj)
+{
+	return JSON.stringify(obj);
+})
+
+
 
 /*
 * Load Routes
@@ -60,7 +78,14 @@ app.use(expressValidator(
 		escapeAndTrim(what)
 		{
 			//escape code
-			what = what.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\//g, '&#x2F;').replace(/\\/g, '&#x5C;').replace(/`/g, '&#96;');
+			what = what.replace(/&/g, '&amp;')
+					.replace(/"/g, '&quot;')
+					.replace(/'/g, '&#x27;')
+					.replace(/</g, '&lt;')
+					.replace(/>/g, '&gt;')
+					.replace(/\//g, '&#x2F;')
+					.replace(/\\/g, '&#x5C;')
+					.replace(/`/g, '&#96;');
 			var idx = what.length - 1, pattern = new RegExp("/\s/");
 			while (idx >= 0 && pattern.test(what[idx]))
 			{
@@ -82,6 +107,8 @@ app.use(passport.session());
 app.use(function(req, res, next)
 {
 	res.locals.user = req.user;
+	res.locals.back = req.session.back || undefined;
+	delete req.session.back;
 	next();
 });
 

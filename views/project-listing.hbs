@@ -36,7 +36,7 @@
 						{{#if this.applied}}
 						<p class="flow-text">You've applied to this! <a href="/profile/application/{{this.applied}}/view" class="btn">View Application</a></p>
 						{{else}}
-						<p class="flow-text">Interested? <a class="btn waves-effect waves-light" href="/project/{{this.id}}/apply">Apply today!</a></p>
+						<p class="flow-text">Interested? <a class="btn waves-effect waves-light" href="/project/{{this.id}}-{{get_slug this.name}}/view">View Project!</a></p>
 						{{/if}}
 					</div>
 				</div>

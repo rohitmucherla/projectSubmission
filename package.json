@@ -31,7 +31,8 @@
     "morgan": "^1.8.2",
     "passport": "^0.3.2",
     "passport-google-oauth": "^1.0.0",
-    "serve-favicon": "^2.4.3"
+    "serve-favicon": "^2.4.3",
+    "speakingurl": "^13.0.0"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"

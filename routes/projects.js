@@ -33,7 +33,6 @@ router.get('/',function(req, res)
 				{
 					projects.forEach(function(project,index)
 					{
-						console.log(applied[project.id]);
 						if(applied[project.id])
 							project.applied = applied[project.id];
 						projects[index] = project;
@@ -81,7 +80,6 @@ router.get('/:offset',function(req,res)
 				{
 					projects.forEach(function(project,index)
 					{
-						console.log(applied[project.id]);
 						if(applied[project.id])
 							project.applied = applied[project.id];
 						projects[index] = project;
@@ -104,7 +102,6 @@ router.get('/:offset',function(req,res)
 
 function checkLogin(req,res,next)
 {
-	console.log('checklogin');
 	//Passport middleware adds user to the req object. If it doesn't exist, the client isn't logged in
 	if(!req.user)
 	{

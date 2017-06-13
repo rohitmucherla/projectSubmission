@@ -26,12 +26,11 @@
 						<h2 class="flow-text center underlined">Notes</h2>
 						<p class="flow-text center">{{#if this.notes}}{{this.notes}}{{else}}[No notes]{{/if}}</p>
 					</div>
-					<div class="row">
-						{{#if this.status}}
-							Status: {{this.status}}
-						{{/if}}
+					<div class="divider row"></div>
+					<div class="row center flow-text">
+						Status: {{status this.status}}<br/>
 						{{#if this.statusNotes}}
-							Info: {{this.statusNotes}}
+							Details: {{this.statusNotes}}
 						{{/if}}
 					</div>
 					<div class="row center">

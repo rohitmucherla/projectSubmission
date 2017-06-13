@@ -10,8 +10,7 @@ var appSchema = mongoose.Schema(
 	time: {type:Number, min: 0, max:20, required:true},
 	notes: {type:String, required:false, },
 	status:{type:Number, required:true},
-	statusNotes:{type:String, required:true},
-	projectName: {type:String, required:true}
+	statusNotes:{type:String, required:true}
 });
 
 module.exports = mongoose.model('Application',appSchema);

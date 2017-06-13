@@ -23,7 +23,20 @@ hbs.registerHelper('get_slug',function(unslug)
 hbs.registerHelper('json',function(obj)
 {
 	return JSON.stringify(obj);
-})
+});
+
+hbs.registerHelper('status',function(value)
+{
+	switch(value)
+	{
+		case 0:
+			return "Submitted";
+			break;
+		default:
+			return "An error occurred retrieving the status of this application";
+			break;
+	}
+});
 
 
 

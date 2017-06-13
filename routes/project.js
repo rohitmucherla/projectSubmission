@@ -48,7 +48,6 @@ router.post('/create',function(req,res)
 		{
 			res.render('project-create',
 			{
-				user:req.user,
 				errors:result.mapped(),
 				langs:req.body.langs //@todo: Update chips in project-create w/ langs value
 			});
@@ -94,8 +93,18 @@ router.get('/:id-:name/view',function(req,res)
 	{
 		if(req.params.name == getSlug(project.name))
 		{
-			req.session.back = {name:project.name,url:`/project/${req.params.id}-${getSlug(project.name)}/view`};
-			res.render('project',{data:project});
+			Application.findOne()
+				.where('project-id').in(req.params.id)
+				.where('user-id').in(req.user.gid)
+				.lean()
+				.exec()
+				.then(function(app)
+			{
+				if(app)
+					project.applied = app.identifier;
+				req.session.back = {name:project.name,url:`/project/${req.params.id}-${getSlug(project.name)}/view`};
+				res.render('project-listing',{projects:[project]});
+			}).catch((error)=>{res.status(500).render('error',{error:error})});
 		}
 		else
 		{
@@ -171,7 +180,6 @@ router.post('/:id-:name/apply',function(req,res)
 						{
 							res.render('project-apply',
 							{
-								user:req.user,
 								errors:result.mapped(),
 							});
 						}
@@ -188,6 +196,8 @@ router.post('/:id-:name/apply',function(req,res)
 							application["skills"] = req.sanitize('ranking').toInt();
 							application["time"] = req.sanitize('availability').toInt();
 							application["notes"] = req.sanitize('notes').escapeAndTrim();
+							application["status"] = 0;
+							application["statusNotes"] = "Waiting for review";
 							application.save(function(err)
 							{
 								if(err)

@@ -3,8 +3,8 @@
 	<ul class="collection">
 		{{#each users}}
 		<li class="collection-item avatar">
-			<img src="{{pic}}" alt="{{name}} Profile Pic" class="circle">
-			<span class="title"><strong>{{name}}</strong></span>
+			<img src="{{pic}}" alt="{{name.full}} Profile Pic" class="circle">
+			<span class="title"><strong>{{name.full}}</strong></span>
 			<p class="description">{{email}}</p>
 			<div class="secondary-content">
 				{{#if approved}}

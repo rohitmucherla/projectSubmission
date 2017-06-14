@@ -3,7 +3,7 @@
 		<div class="container section project">
 			<div class="card">
 				<div class="card-content">
-					<h2 class="flow-text center underlined"><strong>{{this.name}}</strong></h2>
+					<h2 class="flow-text center underlined"><strong>{{{this.name}}}</strong></h2>
 					<div class="row valign-wrapper">
 						<div class="col s6 center valign">
 							{{#if this.paid}}
@@ -20,23 +20,29 @@
 						<div class="col s12 valign">
 							Languages &amp; Frameworks:
 							{{#each this.languages}}
-								<div class="chip"><a href="/lang/{{this}}" target="_blank">{{this}}</a></div>
+								<div class="chip"><a href="/lang/{{this}}" target="_blank">{{{this}}}</a></div>
 							{{else}}
 								[none]
 							{{/each}}
 						</div>
 					</div>
 					<div class="center section container">
-						<p class="flow-text"><span class="title"><strong>Abstract:</strong></span> {{this.abstract}}</p>
+						<p class="flow-text"><span class="title"><strong>Abstract:</strong></span> {{{this.abstract}}}</p>
 					</div>
+					{{#if ../isSingle}}
 					<div class="center section container">
-						<p class="flow-text"><span class="title"><strong>Description:</strong></span> {{this.description}}</p>
+						<p class="flow-text"><span class="title"><strong>Description:</strong></span> {{{this.description}}}</p>
 					</div>
+					{{/if}}
 					<div class="center section">
 						{{#if this.applied}}
 						<p class="flow-text">You've applied to this! <a href="/profile/application/{{this.applied}}/view" class="btn">View Application</a></p>
 						{{else}}
-						<p class="flow-text">Interested? <a class="btn waves-effect waves-light" href="/project/{{this.id}}-{{get_slug this.name}}/view">View Project!</a></p>
+							{{#if ../isSingle}}
+								<p class="flow-text">Interested? <a class="btn waves-effect waves-light" href="/project/{{this.id}}-{{get_slug this.name}}/apply">Apply!</a></p>
+							{{else}}
+								<p class="flow-text">Interested? <a class="btn waves-effect waves-light" href="/project/{{this.id}}-{{get_slug this.name}}/view">View Project!</a></p>
+							{{/if}}
 						{{/if}}
 					</div>
 				</div>

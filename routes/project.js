@@ -55,6 +55,7 @@ router.post('/create',function(req,res)
 		}
 		else
 		{
+			langs = req.sanitize('langs').escapeAndTrim().split(',');
 			//Create new project
 			var project = new Project();
 
@@ -65,7 +66,7 @@ router.post('/create',function(req,res)
 			project.abstract = req.sanitize('abstract').escapeAndTrim();
 			project.owners = [req.user.gid]; //As array
 			project.created = Date.now() + 15; //Add 15ms for execution time
-			project.languages = req.sanitize('langs').escapeAndTrim().split(',') || [];
+			project.languages =  (langs == "") ? [] : langs;
 			project.status = 0; //Unapproved
 			project.paid = req.body.paid == "on" ? 1 : 0;
 			project.numberOfPeople = req.sanitize('number-of-people').toInt();
@@ -74,7 +75,16 @@ router.post('/create',function(req,res)
 				if(err)
 					res.status(500).render('error',{error:err}); //@todo: Create error page for saving
 				else
-					res.redirect(`/project/${project.id}`);
+				{
+					req.user.owner.push(project.id);
+					req.user.save(function(err)
+					{
+						if(err)
+							res.status(500).render('error',{error:err}); //@todo: Create error page for saving
+						else
+							res.redirect(`/project/${project.id}`);
+					})
+				}
 			});
 		}
 	});
@@ -104,8 +114,14 @@ router.get('/:id-:name/view',function(req,res)
 			{
 				if(app)
 					project.applied = app.identifier;
-				req.session.back = {name:project.name,url:`/project/${req.params.id}-${getSlug(project.name)}/view`};
-				res.render('project-listing',{projects:[project]});
+				if(res.locals.back && (res.locals.back.name == project.name))
+				{
+					delete req.session.back;
+					delete res.locals.back;
+				}
+				else
+					req.session.back = {name:project.name,url:`/project/${req.params.id}-${getSlug(project.name)}/view`};
+				res.render('project-listing',{projects:[project],isSingle:true});
 			}).catch((error)=>{res.status(500).render('error',{error:error})});
 		}
 		else
@@ -135,7 +151,7 @@ router.get('/:id-:name/apply',function(req,res)
 		{
 			Project.findOne().where('id').in(req.params.id).lean().exec().then(function(project)
 			{
-				res.locals.title = `Apply to work on ${projet.name}`;
+				res.locals.title = `Apply to work on ${project.name}`;
 				res.render('project-apply',{project:project});
 			}).catch((error)=>{res.status(500).render('error',{error:error})});
 		}

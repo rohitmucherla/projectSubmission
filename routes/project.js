@@ -17,6 +17,7 @@ router.get('/',function(req, res)
 //User wants to create a project
 router.get('/create',function(req,res)
 {
+	res.locals.title = "Create a project";
 	res.render('project-create',{user:req.user});
 })
 
@@ -93,6 +94,7 @@ router.get('/:id-:name/view',function(req,res)
 	{
 		if(req.params.name == getSlug(project.name))
 		{
+			res.locals.title = `${project.name} project details`;
 			Application.findOne()
 				.where('project-id').in(req.params.id)
 				.where('user-id').in(req.user.gid)
@@ -133,6 +135,7 @@ router.get('/:id-:name/apply',function(req,res)
 		{
 			Project.findOne().where('id').in(req.params.id).lean().exec().then(function(project)
 			{
+				res.locals.title = `Apply to work on ${projet.name}`;
 				res.render('project-apply',{project:project});
 			}).catch((error)=>{res.status(500).render('error',{error:error})});
 		}

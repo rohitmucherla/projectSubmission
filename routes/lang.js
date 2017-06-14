@@ -3,11 +3,11 @@ const express = require('express'),
 
 router.get('/',function(req, res)
 {
-	res.render('index', { title: 'Page not ready' });
+	res.render('search')
 });
 
 router.get('/:term',function(req,res)
 {
-	res.send(`You searched for "${req.params.term}".`);
+	res.render('search');
 })
 module.exports = router;

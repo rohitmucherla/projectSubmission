@@ -12,7 +12,7 @@ router.use(checkLogin)
 
 router.get('/',function(req, res)
 {
-	res.render('profile',{user:req.user})
+	res.render('profile');
 });
 
 router.get('/applications',function(req,res)

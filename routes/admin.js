@@ -29,22 +29,28 @@ router.get('/users',function(req,res)
 //List users who have created an account but have not been approved by admins
 router.get('/users/unverified',function(req,res)
 {
-	User.find({approved:false},'gid pic name email approved').then(function(users)
+	User.find()
+		.lean()
+		.where('approved').is(false)
+		.select('gid pic name email approved')
+		.exec()
+		.then(function(users)
 	{
 		res.render('admin-users',{users:users,type:"Unverified"});
-	});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
 //Display the profile of user `id`; the `:` denotes a variable (stored in req.params)
 router.get('/user/:id/',function(req,res)
 {
-	User.findOne({gid:req.params.id},function(error,user)
+	User.findOne()
+		.lean()
+		.where('gid').in(req.params.id)
+		.exec()
+		.then(function(user)
 	{
-		if(error)
-			res.render('error',{error:error});
-		else
-			res.render('admin-user-single',{user:user});
-	})
+		res.render('admin-user-single',{user:user});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
 //Display projects of user `id`
@@ -56,10 +62,8 @@ router.get('/user/:id/projects',function(req,res)
 //Approve user `id`
 router.get('/user/:id/approve',function(req,res)
 {
-	User.findOne({'gid':req.params.id},function(err, user)
+	User.findOne().where('gid').in(req.params.id).lean().exec().then(function(user)
 	{
-		if(err)
-			res.render('error',{error:err});
 		if(user)
 		{
 			if(user.approved)
@@ -77,9 +81,9 @@ router.get('/user/:id/approve',function(req,res)
 		}
 		else
 		{
-			res.status(404).render("error",{error:{status:404,message:"User not found."}})
+			res.render("error",{error:{status:404,message:"User not found."}})
 		}
-	});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
 //Delete user `id`

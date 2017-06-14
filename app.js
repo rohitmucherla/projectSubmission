@@ -38,6 +38,24 @@ hbs.registerHelper('status',function(value)
 	}
 });
 
+hbs.registerHelper('user-nav',function(userAccess)
+{
+	switch(userAccess)
+	{
+		case 0:
+			return[{"name":"Projects",link:"/profile/projects"},
+				{"name":"Applications",link:"/profile/applications"}]
+			break;
+		case 10:
+			return[{"name":"Projects",link:"/profile/projects"},
+					{"name":"Applications",link:"/profile/applications"},
+					{"name":"Admin Panel",link:"/admin"}];
+			break;
+		default:
+			return[];
+	}
+})
+
 
 
 /*

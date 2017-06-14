@@ -44,6 +44,19 @@
 		<header>
 			<nav class="red darken-4">
 				<div class="container">
+					<div class="nav-wrapper">
+						<a href="#" data-activates="mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+						<ul id="nav-mobile" class="left hide-on-med-and-down">
+							{{#each (user-nav user.access)}}
+								<li><a href="{{this.link}}">{{this.name}}</a></li>
+							{{/each}}
+						</ul>
+						<ul class="side-nav" id="mobile">
+							{{#each (user-nav user.access)}}
+								<li><a href="{{this.link}}">{{this.name}}</a></li>
+							{{/each}}
+						</ul>
+					</div>
 					{{#if back}}
 					<a class="left valign nav-back-lg hide-on-small-only" href="{{back.url}}" title="Return to {{back.name}}"><i class="material-icons waves-effect waves-circle">arrow_back</i></a>
 					<a class="left valign hide-on-med-and-up" href="{{back.url}}" title="Return to {{back.name}}"><i class="material-icons waves-effect waves-circle">arrow_back</i></a>

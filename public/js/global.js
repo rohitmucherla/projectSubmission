@@ -1,6 +1,7 @@
 /*Global javascript - scripts that are used on most pages*/
 $(".chips").material_chip({placeholder:"+language",secondaryPlaceholder:'Language'});
 $(".charcount").characterCounter();
+$(".button-collapse").sideNav();
 
 function projectCreateBeforeSubmit()
 {

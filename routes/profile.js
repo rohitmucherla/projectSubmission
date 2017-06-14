@@ -44,6 +44,13 @@ router.get('/applications',function(req,res)
 					{
 						app.projectName = _projects[app["project-id"]];
 					});
+					if(res.locals.back && (res.locals.back.name == "Your Applications"))
+					{
+						delete req.session.back;
+						delete res.locals.back;
+					}
+					else
+						req.session.back = {name:"Your Applications",url:"/profile/applications"};
 					res.locals.applications = applications;
 					res.locals.pagination = (number > LIMIT) ?
 						{needed:true, number: Math.ceil(number / LIMIT), current:1} :
@@ -114,6 +121,27 @@ router.get('/application/:id/edit',function(req,res)
 			res.render('application-404',{single:true})
 		}
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
+});
+
+router.get('/projects',function(req,res)
+{
+	Project.find()
+		.lean()
+		.where('id').in(req.user.owner)
+		.exec()
+		.then(function(projects)
+	{
+		if(projects)
+		{
+			res.locals.projects = projects;
+			res.locals.headerTitle = "Your Projects";
+			res.render('project-listing');
+		}
+		else
+		{
+			res.render('project-404');
+		}
+	}).catch((err)=>{res.status(500).render('error',{error:err})})
 });
 
 function checkLogin(req,res,next)

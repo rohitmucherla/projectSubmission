@@ -74,9 +74,11 @@ router.get('/user/:id/approve',function(req,res)
 			else
 			{
 				user.approved = true;
-				user.save();
-				req.flash('success',`User ${user.name} approved!`)
-				res.render('index');
+				user.save().then(function()
+				{
+					req.flash('success',`User ${user.name} approved!`);
+					res.render('index');
+				}).catch((error)=>{res.status(500).render('error',{error:error})});
 			}
 		}
 		else

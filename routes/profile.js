@@ -3,12 +3,12 @@
 */
 const express = require('express'),
 	router = express.Router(),
-	LIMIT = 10;
+	config = require('../config');
 
-Application = require('../application');
-Project = require('../project');
+Application = require(`../${config.db.path}/application`);
+Project = require(`../${config.db.path}/project`);
 
-router.use(checkLogin)
+router.use(config.functions.requireLogin);
 
 router.get('/',function(req, res)
 {
@@ -21,18 +21,24 @@ router.get('/applications',function(req,res)
 	{
 		if(number > 0)
 		{
-			Application.find({"user-id":req.user.gid})
-				.limit(LIMIT)
+			Application.find()
 				.lean() //returns as Object instead of Instance
+				.limit(config.LIMIT)
+				.where("user-id").is(req.user.gid)
 				.exec()
 				.then(function(applications)
 			{
-				var projects = [];
+				let projects = [];
 				applications.forEach(function(app)
 				{
 					projects.push(app["project-id"]);
 				});
-				Project.find().lean().where('id').in(projects).select('name id').exec().then(function(project)
+				Project.find()
+					.lean()
+					.where('id').in(projects)
+					.select('name id')
+					.exec()
+					.then(function(project)
 				{
 					_projects = {};
 					sendApp = [];
@@ -52,12 +58,12 @@ router.get('/applications',function(req,res)
 					else
 						req.session.back = {name:"Your Applications",url:"/profile/applications"};
 					res.locals.applications = applications;
-					res.locals.pagination = (number > LIMIT) ?
-						{needed:true, number: Math.ceil(number / LIMIT), current:1} :
+					res.locals.pagination = (number > config.LIMIT) ?
+						{needed:true, number: Math.ceil(number / config.LIMIT), current:1} :
 						{needed:false};
 					res.render('profile-application-list')
-				}).catch((error)=>{res.status(500).render('error',{error:error})});
-			}).catch((error)=>{res.status(500).render('error',{error:error})});
+				});
+			});
 		}
 		else
 		{
@@ -94,7 +100,7 @@ router.get('/application/:id/view',function(req,res)
 				res.locals.pagination = {needed:false};
 				res.locals.applications = [application];
 				res.render('profile-application-list');
-			}).catch((error)=>{res.status(500).render('error',{error:error})});
+			});
 		}
 		else
 		{
@@ -143,25 +149,5 @@ router.get('/projects',function(req,res)
 		}
 	}).catch((err)=>{res.status(500).render('error',{error:err})})
 });
-
-function checkLogin(req,res,next)
-{
-	//Passport middleware adds user to the req object. If it doesn't exist, the client isn't logged in
-	if(!req.user)
-	{
-		//Set redirect URL to the requested url
-		req.session.redirectTo = req.originalUrl;
-		//Redirect to the Google Authentication page
-		res.redirect('/auth/google');
-	}
-	else
-	{
-		//Admins have access > 10
-		if(!req.user.approved)
-			res.render('approval-needed',{path:req.originalUrl});
-		else
-			next();
-	}
-}
 
 module.exports = router;

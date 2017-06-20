@@ -38,6 +38,11 @@ hbs.registerHelper('status',function(value)
 	}
 });
 
+hbs.registerHelper('canRenderProject',function(admin,project)
+{
+	return !(project.status == 0 && !admin)
+})
+
 hbs.registerHelper('user-nav',function(userAccess)
 {
 	switch(userAccess)
@@ -62,7 +67,7 @@ hbs.registerHelper('user-nav',function(userAccess)
 * Load Routes
 */
 
-var index = require('./routes/index'),
+let index = require('./routes/index'),
 	lang = require('./routes/lang'),
 	project = require('./routes/project'),
 	projects = require('./routes/projects'),
@@ -71,7 +76,7 @@ var index = require('./routes/index'),
 	admin = require('./routes/admin');
 
 //Create express app
-var app = express();
+let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -117,7 +122,7 @@ app.use(expressValidator(
 					.replace(/\//g, '&#x2F;')
 					.replace(/\\/g, '&#x5C;')
 					.replace(/`/g, '&#96;');
-			var idx = what.length - 1, pattern = new RegExp("/\s/");
+			let idx = what.length - 1, pattern = new RegExp("/\s/");
 			while (idx >= 0 && pattern.test(what[idx]))
 			{
 				idx--;
@@ -164,7 +169,7 @@ app.get('/login', function(req,res)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
-	var err = new Error('Not Found');
+	let err = new Error('Not Found');
 	err.status = 404;
 	next(err);
 });

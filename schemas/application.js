@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-var appSchema = mongoose.Schema(
+let appSchema = mongoose.Schema(
 {
 	identifier: {type: mongoose.SchemaTypes.ObjectId, unique: true},
 	"project-id": {type:String,required:true},

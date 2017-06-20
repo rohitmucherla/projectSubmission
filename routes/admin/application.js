@@ -3,12 +3,7 @@ const express = require('express'),
 
 router.get('/',function(req, res)
 {
-	res.render('search')
+	res.send('ok');
 });
-
-router.get('/:term',function(req,res)
-{
-	res.render('search');
-})
 
 module.exports = router;

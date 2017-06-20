@@ -1,7 +1,7 @@
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy, //Allows us to authenticate with Google
-config = require('./config'), //Loads global settings
+config = require('../config'), //Loads global settings
 mongoose = require('mongoose'), //Database library
-User = require('./user'); //User model for database
+User = require(`../${config.db.path}/user`); //User model for database
 
 mongoose.connect(config.db.conn,config.db.options) //connect to db in the config file
 
@@ -20,7 +20,8 @@ module.exports = function(passport) // make modifications to the passport object
 	// used to deserialize the user
 	passport.deserializeUser(function(id, done)
 	{
-		User.findById(id, function(err, user)
+		//Purposefully not thenning
+		User.findById(id).lean().exec(function(err, user)
 		{
 			done(err, user);
 		});
@@ -72,7 +73,7 @@ module.exports = function(passport) // make modifications to the passport object
 					}
 					else
 					{
-						var newUser = new User(); //Create new user
+						let newUser = new User(); //Create new user
 
 						newUser.gid    = profile.id; //set Google id
 						newUser.token = token; //Access token
@@ -95,7 +96,7 @@ module.exports = function(passport) // make modifications to the passport object
 			else
 			{
 				// user already exists and is logged in, we have to link accounts
-				var user = req.user; // pull the user out of the session
+				let user = req.user; // pull the user out of the session
 
 				user.id    = profile.gid; //Set Google ID
 				user.token = token; //Access token

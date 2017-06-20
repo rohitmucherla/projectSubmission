@@ -1,4 +1,4 @@
-var config =
+let config =
 {
 	db:
 	{
@@ -23,7 +23,8 @@ var config =
 				}
 			},
 			promiseLibrary: require('bluebird')
-		}
+		},
+		path: './schemas'
 	},
 	google:
 	{
@@ -32,7 +33,9 @@ var config =
 		'callbackURL'   : 'http://localhost/auth/google/callback'
 	},
 	base: "",
-	port: 4539
+	port: 4539,
+	functions: require('./bin/functions'),
+	LIMIT: 10
 }
 
 module.exports = config

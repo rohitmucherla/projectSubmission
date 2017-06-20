@@ -4,7 +4,7 @@
 const express = require('express'),
 	router = express.Router(),
 	passport = require('passport');
-require('../passport')(passport);
+require('../bin/passport')(passport);
 
 //Nothing important for this route
 router.get('/', function(req, res)

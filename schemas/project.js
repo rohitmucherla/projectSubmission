@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 require('mongoose-type-url'); //Adds URL to available `type`
 
-var projectSchema = mongoose.Schema(
+let projectSchema = mongoose.Schema(
 {
 	id: {type: mongoose.SchemaTypes.ObjectId, unique: true},
 	name:
@@ -67,7 +67,7 @@ var projectSchema = mongoose.Schema(
 		default: 0,
 		type: Number,
 		min:-1,
-		max: 1
+		max: 2
 	},
 	organization:
 	{

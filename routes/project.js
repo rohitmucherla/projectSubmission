@@ -1,13 +1,13 @@
 const express = require('express'),
 	router = express.Router(),
 	mongoose = require('mongoose'),
-	getSlug = require('speakingurl');
+	getSlug = require('speakingurl'),
+	config = require('../config');
 
-var Project = require('../project'),
-	Application = require('../application'),
-	projectSchema = require('mongoose').model('Project').schema;
+let Project = require(`../${config.db.path}/project`),
+	Application = require(`../${config.db.path}/application`);
 
-router.use(checkLogin);
+router.use(config.functions.requireLogin);
 
 router.get('/',function(req, res)
 {
@@ -57,7 +57,7 @@ router.post('/create',function(req,res)
 		{
 			langs = req.sanitize('langs').escapeAndTrim().split(',');
 			//Create new project
-			var project = new Project();
+			let project = new Project();
 
 			//Set project data
 			project.id = mongoose.Types.ObjectId();
@@ -122,7 +122,7 @@ router.get('/:id-:name/view',function(req,res)
 				else
 					req.session.back = {name:project.name,url:`/project/${req.params.id}-${getSlug(project.name)}/view`};
 				res.render('project-listing',{projects:[project],isSingle:true});
-			}).catch((error)=>{res.status(500).render('error',{error:error})});
+			});
 		}
 		else
 		{
@@ -153,7 +153,7 @@ router.get('/:id-:name/apply',function(req,res)
 			{
 				res.locals.title = `Apply to work on ${project.name}`;
 				res.render('project-apply',{project:project});
-			}).catch((error)=>{res.status(500).render('error',{error:error})});
+			});
 		}
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
@@ -176,7 +176,7 @@ router.post('/:id-:name/apply',function(req,res)
 		}
 		else
 		{
-			Project.find().limit(1).lean().exec().then(function(data)
+			Project.findOne().lean().exec().then(function(data)
 			{
 				if(data.length)
 				{
@@ -205,7 +205,7 @@ router.post('/:id-:name/apply',function(req,res)
 						else
 						{
 							//Create new app
-							var application = new Application();
+							let application = new Application();
 
 							//Set app data
 							application["identifier"] = mongoose.Types.ObjectId();
@@ -231,28 +231,9 @@ router.post('/:id-:name/apply',function(req,res)
 				{
 					req.render('project-404');
 				}
-			}).catch((error)=>{res.status(500).render('error',{error:error})})
+			});
 		}
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
-function checkLogin(req,res,next)
-{
-	//Passport middleware adds user to the req object. If it doesn't exist, the client isn't logged in
-	if(!req.user)
-	{
-		//Set redirect URL to the requested url
-		req.session.redirectTo = req.originalUrl;
-		//Redirect to the Google Authentication page
-		res.redirect('/auth/google');
-	}
-	else
-	{
-		//Admins have access > 10
-		if(!req.user.approved)
-			res.render('approval-needed',{path:req.originalUrl});
-		else
-			next();
-	}
-}
 module.exports = router;

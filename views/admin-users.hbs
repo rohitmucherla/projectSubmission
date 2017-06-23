@@ -1,5 +1,12 @@
 <div class="container">
-	<h2>{{type}} Users</h2>
+	<h2 class="center">{{type}} Users</h2>
+	<form action="/admin/users/search{{#if type}}?type={{type}}{{/if}}" method="get">
+		<div class="input-field">
+			<input type="search" name="query" required></input>
+			<label class="label-icon" for="query"><i class="material-icons">search</i></label>
+		 	<i class="material-icons">close</i>
+		</div>
+	</form>
 	<ul class="collection">
 		{{#each users}}
 		<li class="collection-item avatar">
@@ -9,6 +16,7 @@
 			<div class="secondary-content">
 				{{#if approved}}
 				<a href="/admin/user/{{gid}}/projects" class="waves-effect waves-light btn red darken-4">Projects</a>
+				<a href="/admin/user/{{gid}}/applications" class="waves-effect waves-light btn red darken-4">Applications</a>
 				{{else}}
 				<a href="/admin/user/{{gid}}/approve" class="waves-effect waves-light btn red darken-4" data-id="{{gid}}" class="user-approve">Approve</a>
 				{{/if}}

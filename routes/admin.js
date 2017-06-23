@@ -15,6 +15,11 @@ let projectRoute = require('./admin/project'),
 	userRoute = require('./admin/user');
 
 router.use(config.functions.requireLogin); //Ensure user is logged in and can be in the admin area before doing anything
+router.use(function(req,res,next)
+{
+	res.locals.admin = true;
+	next();
+});
 router.use('/user',singleUserRoute);
 router.use('/users',userRoute);
 router.use('/application',applicationRoute);
@@ -22,7 +27,7 @@ router.use('/project',projectRoute);
 
 router.get('/',function(req, res)
 {
-	res.send('You can be here.');
+	res.render('admin-index');
 });
 
 router.get('/projects',function(req,res)

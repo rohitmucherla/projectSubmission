@@ -81,4 +81,23 @@ router.get('/:id/delete',function(req,res)
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
+router.get('/:id/applications',function(req,res)
+{
+	Application.find()
+		.lean()
+		.where("user-id").equals(req.user.gid)
+		.exec()
+		.then(function(applications)
+		{
+			//@todo: add pagination
+			res.locals.applications = applications;
+			User.findOne().where('gid').equals(req.params.id).select('name').exec(function(name)
+			{
+				res.locals.header = name + '\'s';
+				res.render('profile-application-list');
+			});
+		})
+		.catch((error)=>{res.status(500).render('error',{error:error})});
+})
+
 module.exports = router;

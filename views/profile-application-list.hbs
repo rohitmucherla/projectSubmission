@@ -1,4 +1,4 @@
-{{#unless isSingle}}<h1 class="center">Your applications</h1>{{/unless}}
+{{#unless isSingle}}<h1 class="center">{{#if header}}{{header}}{{else}}Your{{/if}} applications</h1>{{/unless}}
 <div class="application-container serction">
 	{{#each applications}}
 		<div class="container section application">

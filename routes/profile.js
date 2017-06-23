@@ -35,8 +35,8 @@ router.get('/applications',function(req,res)
 				});
 				Project.find()
 					.lean()
-					.where('id').in(projects)
-					.select('name id')
+					.where('_id').in(projects)
+					.select('name')
 					.exec()
 					.then(function(project)
 				{
@@ -44,7 +44,7 @@ router.get('/applications',function(req,res)
 					sendApp = [];
 					project.forEach(function(info)
 					{
-						_projects[info.id] = info.name;
+						_projects[info._id] = info.name;
 					});
 					applications.forEach(function(app,index)
 					{
@@ -81,7 +81,7 @@ router.get('/application/:id/view',function(req,res)
 {
 	Application.findOne()
 		.lean()
-		.where('identifier').in(req.params.id)
+		.where('_id').in(req.params.id)
 		.where('user-id').in(req.user.gid)
 		.exec()
 		.then(function(application)
@@ -90,7 +90,7 @@ router.get('/application/:id/view',function(req,res)
 		{
 			Project.findOne()
 				.lean()
-				.where('id')
+				.where('_id')
 				.in(application["project-id"])
 				.select('name')
 				.exec()
@@ -113,7 +113,7 @@ router.get('/application/:id/edit',function(req,res)
 {
 	Application.findOne()
 		.lean()
-		.where('identifier').in(req.params.id)
+		.where('_id').in(req.params.id)
 		.where('user-id').in(req.user.gid)
 		.exec()
 		.then(function(application)
@@ -133,7 +133,7 @@ router.get('/projects',function(req,res)
 {
 	Project.find()
 		.lean()
-		.where('id').in(req.user.owner)
+		.where('_id').in(req.user.owner)
 		.exec()
 		.then(function(projects)
 	{

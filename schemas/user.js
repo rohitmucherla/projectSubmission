@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 
 let userSchema = mongoose.Schema(
 {
-	//id: {type: String, unique: true},
 	gid: String, //GoogleID
 	token: String,
 	name:

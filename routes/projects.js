@@ -1,6 +1,5 @@
 const express = require('express'),
 	router = express.Router(),
-	mongoose = require('mongoose'),
 	config = require('../config');
 
 let Project = require(`../${config.db.path}/project`),

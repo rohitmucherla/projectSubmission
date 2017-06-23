@@ -5,7 +5,6 @@
 const express = require('express'),
 	router = express.Router(),
 	config = require('../config'), //Global Configuration
-	mongoose = require('mongoose'), //Database
 	User = require(`../${config.db.path}/user`), //User Database Schema
 	Apps = require(`../${config.db.path}/application`);
 

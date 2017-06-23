@@ -1,6 +1,5 @@
 const express = require('express'),
 	router = express.Router(),
-	mongoose = require('mongoose'),
 	getSlug = require('speakingurl'),
 	config = require('../config');
 
@@ -60,7 +59,6 @@ router.post('/create',function(req,res)
 			let project = new Project();
 
 			//Set project data
-			project.id = mongoose.Types.ObjectId();
 			project.name = req.sanitize('name').escapeAndTrim();
 			project.description = req.sanitize('description').escapeAndTrim();
 			project.abstract = req.sanitize('abstract').escapeAndTrim();
@@ -92,7 +90,7 @@ router.post('/create',function(req,res)
 
 router.get('/:id',function(req,res)
 {
-	Project.findOne({id:req.params.id}).lean().exec().then(function(project)
+	Project.findOne({_id:req.params.id}).lean().exec().then(function(project)
 	{
 		res.redirect(`/project/${req.params.id}-${getSlug(project.name)}/view`);
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
@@ -100,7 +98,7 @@ router.get('/:id',function(req,res)
 
 router.get('/:id-:name/view',function(req,res)
 {
-	Project.findOne({id:req.params.id}).lean().exec().then(function(project)
+	Project.findOne({_id:req.params.id}).lean().exec().then(function(project)
 	{
 		if(req.params.name == getSlug(project.name))
 		{
@@ -133,7 +131,7 @@ router.get('/:id-:name/view',function(req,res)
 
 router.get('/:id/view',function(req,res)
 {
-	Project.findOne({id:req.params.id}).lean().exec().then(function(project)
+	Project.findOne({_id:req.params.id}).lean().exec().then(function(project)
 	{
 		res.redirect(`/project/${req.params.id}-${getSlug(project.name)}/view`);
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
@@ -149,7 +147,7 @@ router.get('/:id-:name/apply',function(req,res)
 		}
 		else
 		{
-			Project.findOne().where('id').in(req.params.id).lean().exec().then(function(project)
+			Project.findOne().where('_id').in(req.params.id).lean().exec().then(function(project)
 			{
 				res.locals.title = `Apply to work on ${project.name}`;
 				res.render('project-apply',{project:project});
@@ -208,7 +206,6 @@ router.post('/:id-:name/apply',function(req,res)
 							let application = new Application();
 
 							//Set app data
-							application["identifier"] = mongoose.Types.ObjectId();
 							application["project-id"] = req.params.id; //We already know the project exists
 							application["user-id"] = req.user.gid;
 							application["level-of-interest"] = req.sanitize('level-of-interest').toInt();

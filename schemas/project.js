@@ -25,20 +25,23 @@ let projectSchema = mongoose.Schema(
 	},
 	owners:
 	{
-		type:[String],
+		type:[mongoose.Schema.Types.ObjectId],
 		required: true,
+		ref: 'User',
 		default: undefined
 	},
 	managers:
 	{
-		type: [String],
+		type: [mongoose.Schema.Types.ObjectId],
 		required: false,
+		ref: 'User',
 		default: undefined
 	},
 	developers:
 	{
-		type: [String],
+		type: [mongoose.Schema.Types.ObjectId],
 		required: false,
+		ref: 'User',
 		default: undefined
 	},
 	created:

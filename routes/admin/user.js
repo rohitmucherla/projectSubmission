@@ -23,7 +23,7 @@ router.get('/unverified',function(req,res)
 {
 	User.find()
 		.lean()
-		.where('approved').is(0)
+		.where('approved').equal(0)
 		.select('gid pic name email approved')
 		.limit(config.LIMIT)
 		.exec()

@@ -13,8 +13,15 @@ let userSchema = mongoose.Schema(
 	company: String,
 	access: {required:true, type:Number, default: 0},
 	email: String,
-	workingOn: Array,
-	owner: Array,
+	workingOn:{
+		type: [mongoose.Schema.Types.ObjectId],
+		ref: 'Project'
+	},
+	owner:
+	{
+		type: [mongoose.Schema.Types.ObjectId],
+		ref: 'Project'
+	},
 	approved: {type:Boolean,required:true,default:false},
 	profileComplete:{required:true,type:Boolean,default:false},
 	pic:{required:true,type:String}

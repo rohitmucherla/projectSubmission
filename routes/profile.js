@@ -24,7 +24,7 @@ router.get('/applications',function(req,res)
 			Application.find()
 				.lean() //returns as Object instead of Instance
 				.limit(config.LIMIT)
-				.where("user-id").is(req.user.gid)
+				.where("user-id").equals(req.user.gid)
 				.exec()
 				.then(function(applications)
 			{

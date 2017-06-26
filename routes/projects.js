@@ -10,7 +10,7 @@ router.use(config.functions.requireLogin);
 router.get('/',function(req, res)
 {
 	Application.find()
-		.where('user-id').is(req.user.gid)
+		.where('user-id').equals(req.user.gid)
 		.select('project-id identifier')
 		.lean()
 		.exec()
@@ -66,7 +66,7 @@ router.get('/',function(req, res)
 router.get('/:offset',function(req,res)
 {
 	Application.find()
-		.where('user-id').is(req.user.gid)
+		.where('user-id').equals(req.user.gid)
 		.select('project-id identifier')
 		.lean()
 		.exec()

@@ -70,7 +70,7 @@ router.get('/:id/approve',function(req,res)
 router.get('/:id/delete',function(req,res)
 {
 	User.findOne()
-		.where('gid').is(req.params.id)
+		.where('gid').equals(req.params.id)
 		.remove()
 		.exec()
 		.then(function(b)

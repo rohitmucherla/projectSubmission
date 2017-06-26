@@ -25,18 +25,21 @@ let projectSchema = mongoose.Schema(
 	},
 	owners:
 	{
-		type:Array,
-		required: true
+		type:[String],
+		required: true,
+		default: undefined
 	},
 	managers:
 	{
-		type: Array,
-		required: false
+		type: [String],
+		required: false,
+		default: undefined
 	},
 	developers:
 	{
-		type: Array,
-		required: false
+		type: [String],
+		required: false,
+		default: undefined
 	},
 	created:
 	{

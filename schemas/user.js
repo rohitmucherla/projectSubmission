@@ -27,9 +27,9 @@ let userSchema = mongoose.Schema(
 		lowercase: true,
 		required: true,
 		default: undefined,
-		match: /[a-zA-Z0-9.-_]/i //from https://get.slack.help/hc/en-us/articles/216360827-Change-your-username
+		match: /[a-zA-Z0-9.-_]/i, //from https://get.slack.help/hc/en-us/articles/216360827-Change-your-username
 		maxlength: 21
-	}
+	},
 	website:
 	{
 		type: mongoose.SchemaTypes.Url,

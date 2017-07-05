@@ -1,4 +1,5 @@
 const express = require('express'),
+	config = require('./config'),
 	getSlug = require('speakingurl'),
 	hbs = require('hbs'),
 	path = require('path'),
@@ -59,6 +60,11 @@ hbs.registerHelper('user-nav',function(userAccess)
 		default:
 			return[];
 	}
+});
+
+hbs.registerHelper('sameUser',function(userA,userB)
+{
+	return userA.gid == userB.gid;
 })
 
 
@@ -145,6 +151,10 @@ app.use(function(req, res, next)
 	res.locals.user = req.user;
 	res.locals.back = req.session.back || undefined;
 	delete req.session.back;
+	res.locals.config =
+	{
+		slack: config.slack
+	};
 	next();
 });
 

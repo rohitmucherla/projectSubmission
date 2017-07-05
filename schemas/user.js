@@ -12,6 +12,12 @@ let userSchema = mongoose.Schema(
 		full: String
 	},
 	company: String,
+	isPublic:
+	{
+		type:Boolean,
+		default:true,
+		required:true
+	},
 	github:
 	{
 		type: String,

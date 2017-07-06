@@ -61,6 +61,7 @@ module.exports = function(passport) // make modifications to the passport object
 							user.name.last = profile.name.familyName;
 							user.name.full = profile.displayName
 							user.pic  = profile.photos[0].value; //update pic
+							user.isPublic = true;
 
 							user.save(function(err) //save
 							{
@@ -81,6 +82,7 @@ module.exports = function(passport) // make modifications to the passport object
 						newUser.name.first = profile.name.givenName;
 						newUser.name.last = profile.name.familyName;
 						newUser.name.full = profile.displayName;
+						newUser.isPublic = true;
 
 						newUser.pic  = profile.photos[0].value; //Profile picture
 
@@ -105,6 +107,7 @@ module.exports = function(passport) // make modifications to the passport object
 				user.name.last = profile.name.familyName;
 				user.name.full = profile.displayName;
 				user.pic  = profile.photos[0].value; //Profile picture
+				user.isPublic = true;
 
 				user.save(function(err) //save
 				{

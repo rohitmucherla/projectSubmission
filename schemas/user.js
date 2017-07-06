@@ -22,7 +22,6 @@ let userSchema = mongoose.Schema(
 	{
 		type: String,
 		lowercase: true,
-		required: true,
 		default: undefined,
 		maxlength:39,
 		match: /^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i //from https://github.com/shinnn/github-username-regex
@@ -31,7 +30,6 @@ let userSchema = mongoose.Schema(
 	{
 		type: String,
 		lowercase: true,
-		required: true,
 		default: undefined,
 		match: /[a-zA-Z0-9.-_]/i, //from https://get.slack.help/hc/en-us/articles/216360827-Change-your-username
 		maxlength: 21
@@ -39,25 +37,14 @@ let userSchema = mongoose.Schema(
 	website:
 	{
 		type: mongoose.SchemaTypes.Url,
-		required: true,
 		default: undefined
 	},
 	headline:
 	{
 		type:String,
-		required:true,
 		default:undefined,
 		minlength:10,
 		maxlength:120
-	},
-	bio:
-	{
-		type:String,
-		required: true,
-		default: undefined,
-		minlength: 200,
-		maxlength: 2000
-
 	},
 	access: {required:true, type:Number, default: 0},
 	email: String,

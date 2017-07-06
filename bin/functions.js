@@ -1,5 +1,5 @@
 functions = {
-	requireLogin: function(req,res,next)
+	requireAdminLogin: function(req,res,next)
 	{
 		//Passport middleware adds user to the req object. If it doesn't exist, the client isn't logged in
 		if(!req.user)
@@ -18,6 +18,18 @@ functions = {
 			else
 				next();
 		}
-	}
+	},
+	requireLogin: function(req,res,next)
+	{
+		//Passport middleware adds user to the req object. If it doesn't exist, the client isn't logged in
+		if(!req.user)
+		{
+			//Set redirect URL to the requested url
+			req.session.redirectTo = req.originalUrl;
+			//Redirect to the Google Authentication page
+			res.redirect('/auth/google');
+		}
+		else next();
+	},
 }
 module.exports = functions;

@@ -1,7 +1,22 @@
 /*Global CSS - CSS that is used throughout the site*/
-.underlined
+.underlined {text-decoration: underline;}
+.nav-back-lg {margin-top:5px;}
+.materialboxedcenter {margin:0 auto;}
+.header-logout i
 {
-	text-decoration: underline;
+	display:inline-block !important;
+	height:auto !important;
+	line-height:1 !important;
+	position: relative;
+	top:7px;
+}
+.header-profile, .header-logout i, .header-login
+{
+	padding:0 15px;
+	transition:background 0.3s ease;
+}
+header.global a:hover {background:rgba(33,33,33,0.2);}
+
 }
 
 .nav-back-lg

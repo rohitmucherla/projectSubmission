@@ -53,7 +53,8 @@ hbs.registerHelper('user-nav',function(userAccess)
 				{"name":"Applications",link:"/profile/applications"}]
 			break;
 		case 10:
-			return[{"name":"Projects",link:"/profile/projects"},
+			return[{"name":"Explore",link:"/projects"},
+					{"name":"Projects",link:"/profile/projects"},
 					{"name":"Applications",link:"/profile/applications"},
 					{"name":"Admin Panel",link:"/admin"}];
 			break;
@@ -176,6 +177,10 @@ app.get('/login', function(req,res)
 	else
 		res.redirect('/auth/google');
 });
+app.get('/logout',function(req,res)
+{
+	res.redirect('/auth/logout');
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -23,7 +23,7 @@ router.get('/edit',function(req,res)
 
 router.get('/projects',function(req,res)
 {
-
+	res.send('ok');
 });
 
 

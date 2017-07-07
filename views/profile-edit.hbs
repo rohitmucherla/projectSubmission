@@ -1,0 +1,31 @@
+{{#unless user.approved}}
+	<div class="error red-text flow-text center">Your profile is not approved. Your actions are limited</div>
+{{/unless}}
+<div class="fixed-action-btn">
+	<a class="btn-floating btn-large red large" href="/faq#profile-edit">?</a>
+</div>
+<div class="profile-main row container">
+	<div class="card">
+		<div class="card-content container">
+			<div class="profile-wrapper">
+				<a href="/faq#profile-edit" target="_blank">What can('t) I edit</a>
+				<p class="center"><img src="{{user.pic}}" alt="{{user.name.full}}'s profile picture" class="circle responsive-img user-profile-image z-depth-5 hoverable"/></p>
+				<p class="center large"><strong>{{user.name.full}}</strong></p>
+				{{#if user.headline}}
+					<p class="center headline">{{user.headline}}<p>
+				{{/if}}
+				<div class="center outlinks">
+					{{#if user.github}}
+						<a class="outlink-container logo-github" href="https://github.com/{{user.github}}" target="_blank" title="{{user.name.first}}'s github profile ({{user.github}})">Github</a>
+					{{/if}}
+					{{#if user.slack}}
+						<a class="outlink-container logo-slack" href="https://{{config.slack}}.slack.com/team/vikas.potluri" title="{{user.name.first}} on slack ({{user.slack}}" target="_blank">Slack</a>
+					{{/if}}
+					{{#if user.website}}
+						<a class="outlink-container nopadhelp" href="https://www.google.com" target="_blank" title="{{user.name.first}}'s website"><span class="outlink-hide"><i class="logo-website material-icons">link</i></span> Website</a>
+					{{/if}}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

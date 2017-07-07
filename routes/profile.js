@@ -12,8 +12,38 @@ router.use(config.functions.requireLogin);
 
 router.get('/',function(req, res)
 {
+	res.locals.userData = res.locals.user;
 	res.render('profile');
 });
+
+router.get('/edit',function(req,res)
+{
+	res.render('profile-edit');
+});
+
+router.get('/:id',function(req,res)
+{
+	if(req.params.id == req.user.gid)
+	{
+		console.log(req.user, req.params);
+		res.redirect('/profile');
+	}
+	else
+	{
+		User.findOne()
+			.lean()
+			.where('gid').equals(req.params.id)
+			.exec()
+			.then(function(user)
+			{
+				if(user)
+				{
+					res.locals.userData = user;
+					res.render('profile');
+				}
+			}).catch((error)=>{res.status(500).render('error',{error:error})});
+	}
+})
 
 router.get('/applications',function(req,res)
 {

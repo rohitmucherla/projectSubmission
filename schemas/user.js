@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 require('mongoose-type-url');
+mongoose.Promise = require('bluebird');
 
 let userSchema = mongoose.Schema(
 {

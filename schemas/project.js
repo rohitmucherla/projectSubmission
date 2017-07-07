@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 require('mongoose-type-url'); //Adds URL to available `type`
+mongoose.Promise = require('bluebird');
 
 let projectSchema = mongoose.Schema(
 {

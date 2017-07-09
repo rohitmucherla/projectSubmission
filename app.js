@@ -147,7 +147,6 @@ app.use(session(
 	saveUninitialized:false,
 	resave:false,
 	signed:true,
-	cookie: {secure:true}
 	//@todo: set store (in-memory store is for development only)
 }));
 //Use passport

@@ -16,6 +16,7 @@
 	transition:background 0.3s ease;
 }
 header.global a:hover {background:rgba(33,33,33,0.2);}
+.help-fab{font-size:1.6rem;}
 
 /*Profile styles*/
 .profile-edit

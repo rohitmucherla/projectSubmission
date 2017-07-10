@@ -11,7 +11,7 @@ router.get('/',function(req, res)
 {
 	Application.find()
 		.where('user-id').equals(req.user.gid)
-		.select('project-id identifier')
+		.select('project-id')
 		.lean()
 		.exec()
 		.then(function(e)
@@ -74,7 +74,7 @@ router.get('/:offset',function(req,res)
 	{
 		Application.find()
 			.where('user-id').equals(req.user.gid)
-			.select('project-id identifier')
+			.select('project-id')
 			.lean()
 			.exec()
 			.then(function(e)
@@ -82,7 +82,7 @@ router.get('/:offset',function(req,res)
 			applied = [];
 			e.forEach(function(app)
 			{
-				applied[app["project-id"]] = app["identifier"];
+				applied[app["project-id"]] = app["_id"];
 			});
 			//First get the number
 			Project.count()

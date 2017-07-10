@@ -19,7 +19,7 @@ router.get('/',function(req, res)
 		applied = [];
 		e.forEach(function(app)
 		{
-			applied[app["project-id"]] = app["identifier"];
+			applied[app["project-id"]] = app["_id"];
 		});
 		//Get the number of projects in the db
 		//note: this is not an expensive calculation

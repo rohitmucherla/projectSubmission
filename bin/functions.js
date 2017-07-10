@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 functions = {
 	requireAdminLogin: function(req,res,next)
 	{
@@ -31,5 +32,18 @@ functions = {
 		}
 		else next();
 	},
+	mongooseId: function(attempt)
+	{
+		let ret;
+		try
+		{
+			ret = mongoose.Types.ObjectId(attempt)
+		}
+		catch(E)
+		{
+			ret = undefined;
+		}
+		return ret;
+	}
 }
 module.exports = functions;

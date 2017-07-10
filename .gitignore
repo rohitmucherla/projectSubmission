@@ -60,3 +60,5 @@ typings/
 config.js
 bin/www
 older.html
+*.sublime-workspace
+*.sublime-project

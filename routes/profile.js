@@ -91,6 +91,13 @@ router.get('/application/:id',function(req,res)
 
 router.get('/application/:id/view',function(req,res)
 {
+	id = config.functions.mongooseId(req.params.id);
+	if(!id)
+	{
+		res.locals.single = true;
+		res.render('application-404');
+		return;
+	}
 	Application.findOne()
 		.lean()
 		.where('_id').in(req.params.id)
@@ -102,8 +109,7 @@ router.get('/application/:id/view',function(req,res)
 		{
 			Project.findOne()
 				.lean()
-				.where('_id')
-				.in(application["project-id"])
+				.where('_id').equals(application["project-id"])
 				.select('name')
 				.exec()
 				.then(function(project)

@@ -97,6 +97,7 @@ module.exports = function(passport) // make modifications to the passport object
 			}
 			else
 			{
+				//@todo: fix this (req.user is an object, not a Mongoose Object )
 				// user already exists and is logged in, we have to link accounts
 				let user = req.user; // pull the user out of the session
 

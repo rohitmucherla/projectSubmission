@@ -29,21 +29,21 @@ let projectSchema = mongoose.Schema(
 		type:[mongoose.Schema.Types.ObjectId],
 		required: true,
 		ref: 'User',
-		default: undefined
+		default: []
 	},
 	managers:
 	{
 		type: [mongoose.Schema.Types.ObjectId],
 		required: false,
 		ref: 'User',
-		default: undefined
+		default: []
 	},
 	developers:
 	{
 		type: [mongoose.Schema.Types.ObjectId],
 		required: false,
 		ref: 'User',
-		default: undefined
+		default: []
 	},
 	created:
 	{

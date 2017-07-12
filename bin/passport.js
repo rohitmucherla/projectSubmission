@@ -1,9 +1,6 @@
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy, //Allows us to authenticate with Google
 config = require('../config'), //Loads global settings
-mongoose = require('mongoose'), //Database library
 User = require(`../${config.db.path}/user`); //User model for database
-
-mongoose.connect(config.db.conn,config.db.options) //connect to db in the config file
 
 module.exports = function(passport) // make modifications to the passport object
 {

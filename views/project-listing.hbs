@@ -2,12 +2,17 @@
 	{{#if headerTitle}}
 		{{headerTitle}}
 	{{else}}
+		{{#unless single}}
 		Projects
+		{{/unless}}
 	{{/if}}
 </h1>
+<div class="fixed-action-btn">
+	<a class="btn-floating waves-effect btn-large red accent-4 large help-fab hoverable" href="/project/create" title="Create a project"><i class="material-icons large">create</i></a>
+</div>
 <div class="project-container section">
 	{{#each projects}}
-		{{#if (canRenderProject ../admin this)}}
+		{{#if (canRenderProject ../admin this ../user)}}
 		<div class="container section project">
 			<div class="card">
 				<div class="card-content">
@@ -63,8 +68,19 @@
 				</div>
 			</div>
 		</div>
+		{{else}}
+			{{#if ../single}}
+				<div class="container section">
+					<div class="card section center">
+						<h1>You need permission to view this project</h1>
+						<p class="flow-text center">Here's a lonely road so you can ponder life</p>
+						<p class="center container"><img class="responsive-img materialboxed materialboxedcenter" alt="Road" src="/img/403-road.jpg" /></p><br/>
+					</div>
+				</div>
+			{{/if}}
 		{{/if}}
 	{{/each}}
 </div>
 {{#if pagination.needed}}
+//@todo: add pagination
 {{/if}}

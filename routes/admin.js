@@ -3,6 +3,7 @@
 */
 
 const express = require('express'),
+	console = require('tracer').colorConsole(),
 	router = express.Router(),
 	config = require('../config'), //Global Configuration
 	User = require(`../${config.db.path}/user`), //User Database Schema

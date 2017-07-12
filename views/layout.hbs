@@ -46,6 +46,10 @@
 				<div class="container">
 					<div class="nav-wrapper">
 						<a href="#" data-activates="mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+						{{#if back}}
+						<a class="left valign circle hide-on-small-only" href="{{back.url}}" title="Return to {{back.name}}"><i class="material-icons waves-effect waves-circle">arrow_back</i></a>
+						<a class="left valign hide-on-med-and-up" href="{{back.url}}" title="Return to {{back.name}}"><i class="material-icons waves-effect waves-circle">arrow_back</i></a>
+						{{/if}}
 						<ul id="nav-mobile" class="left hide-on-med-and-down">
 							{{#each (user-nav user.access)}}
 								<li><a href="{{this.link}}">{{this.name}}</a></li>
@@ -58,10 +62,6 @@
 							{{/each}}
 						</ul>
 					</div>
-					{{#if back}}
-					<a class="left valign nav-back-lg hide-on-small-only" href="{{back.url}}" title="Return to {{back.name}}"><i class="material-icons waves-effect waves-circle">arrow_back</i></a>
-					<a class="left valign hide-on-med-and-up" href="{{back.url}}" title="Return to {{back.name}}"><i class="material-icons waves-effect waves-circle">arrow_back</i></a>
-					{{/if}}
 					{{#if user}}
 					<a class="right header-logout" title="Logout" href="/logout">&nbsp;<i class="material-icons">exit_to_app</i></a>
 					<a class="right header-profile" title="Profile" href="/profile">Welcome back, {{user.name.first}}&nbsp;</a>

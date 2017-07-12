@@ -1,16 +1,24 @@
 const express = require('express'),
+	console = require('tracer').colorConsole();
 	config = require('./config'),
 	getSlug = require('speakingurl'),
 	hbs = require('hbs'),
 	path = require('path'),
 	//favicon = require('serve-favicon'),
 	logger = require('morgan'),
+	mongoose = require('mongoose'),
 	cookieParser = require('cookie-parser'),
 	bodyParser = require('body-parser'),
 	session = require('express-session'),
 	flash = require('express-flash'),
 	expressValidator = require('express-validator'),
 	passport = require('passport');
+
+/*
+* Connect to the database
+*/
+
+mongoose.connect(config.db.conn,config.db.options) //connect to db in the config file
 
 /*
 * Register helpers
@@ -39,9 +47,25 @@ hbs.registerHelper('status',function(value)
 	}
 });
 
-hbs.registerHelper('canRenderProject',function(admin,project)
+hbs.registerHelper('canRenderProject',function(admin,project,user)
 {
-	return !(project.status == 0 && !admin)
+	/*
+	* @todo: figure out if we can improve efficiency here
+	*  - user._id is a mongoose ObejctID
+	*  - project.[owners,managers,developers] are [ObjectID]s,
+	*  - project.owners[{{userIndex}}] != user._id
+	*/
+	allowed = [];
+	project.owners
+		.concat(project.managers)
+		.concat(project.developers)
+		.map(function(user)
+	{
+		allowed.push(user.toString());
+	});
+	//@endtodo
+	userAccess = allowed.includes(user._id.toString());
+	return userAccess || !(project.status == 0 && !admin);// || user.access >= 10;
 })
 
 hbs.registerHelper('user-nav',function(userAccess)
@@ -67,8 +91,6 @@ hbs.registerHelper('sameUser',function(userA,userB)
 {
 	return userA.gid == userB.gid;
 })
-
-
 
 /*
 * Load Routes

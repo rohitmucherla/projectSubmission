@@ -66,7 +66,7 @@ hbs.registerHelper('canRenderProject',function(admin,project,user)
 	//@endtodo
 	userAccess = allowed.includes(user._id.toString());
 	return userAccess || !(project.status == 0 && !admin);// || user.access >= 10;
-})
+});
 
 hbs.registerHelper('user-nav',function(userAccess)
 {
@@ -90,7 +90,22 @@ hbs.registerHelper('user-nav',function(userAccess)
 hbs.registerHelper('sameUser',function(userA,userB)
 {
 	return userA.gid == userB.gid;
-})
+});
+
+hbs.registerHelper('renderProjectApproval',function(isAdmin,project)
+{
+	return isAdmin && (project.status == 0)
+});
+
+hbs.registerHelper('public',function(project)
+{
+	return project.status != 0;
+});
+
+hbs.registerHelper('canRenderUser',function(user,currentUser)
+{
+	return (user.gid == currentUser.gid) || user.isPublic;
+});
 
 /*
 * Load Routes
@@ -103,6 +118,7 @@ let index = require('./routes/index'),
 	auth = require('./routes/auth'),
 	profile = require('./routes/profile'),
 	admin = require('./routes/admin');
+	faq = require('./routes/faq');
 
 //Create express app
 let app = express();
@@ -200,6 +216,7 @@ app.use('/projects', projects);
 app.use('/auth', auth);
 app.use('/profile', profile);
 app.use('/admin', admin);
+app.use('/faq', faq);
 app.get('/login', function(req,res)
 {
 	if(req.user)

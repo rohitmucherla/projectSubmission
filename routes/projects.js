@@ -1,4 +1,5 @@
 const express = require('express'),
+	console = require('tracer').colorConsole(),
 	router = express.Router(),
 	config = require('../config');
 
@@ -21,10 +22,16 @@ router.get('/',function(req, res)
 		{
 			applied[app["project-id"]] = app["_id"];
 		});
+		//Query: SELECT * FROM `Project` WHERE (status=`1`) OR (status=`0` AND [User in owners OR managers OR developers])
 		//Get the number of projects in the db
 		//note: this is not an expensive calculation
 		Project.count()
-			.where('status').equals(1)
+			.or([
+				{'status':1},
+				{$and:[{'status':0},{'owners':req.user._id.toString()}]},
+				{$and:[{'status':0},{'managers':req.user._id.toString()}]},
+				{$and:[{'status':0},{'developers':req.user._id.toString()}]}
+			])
 			.lean()
 			.exec()
 			.then(function(number)
@@ -39,6 +46,12 @@ router.get('/',function(req, res)
 				//Get the first config.LIMIT projects
 				Project.find()
 					.limit(config.LIMIT)
+					.or([
+						{'status':1},
+						{$and:[{'status':0},{'owners':req.user._id.toString()}]},
+						{$and:[{'status':0},{'managers':req.user._id.toString()}]},
+						{$and:[{'status':0},{'developers':req.user._id.toString()}]}
+					])
 					.lean()
 					.exec()
 					.then(function(projects)
@@ -63,6 +76,7 @@ router.get('/',function(req, res)
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
+//@todo: normalize query (see / logic)
 router.get('/:offset',function(req,res)
 {
 	if(!parseInt(req.params.offset))

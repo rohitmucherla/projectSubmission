@@ -106,13 +106,19 @@ module.exports = function(passport) // make modifications to the passport object
 				user.name.full = profile.displayName;
 				user.pic  = profile.photos[0].value; //Profile picture
 				user.isPublic = true;
-
-				user.save(function(err) //save
+				try
 				{
-					if (err)
-						return done(err);
-					return done(null, user);
-				});
+					user.save(function(err) //save
+					{
+						if (err)
+							return done(err);
+						return done(null, user);
+					});
+				}
+				catch(E)
+				{
+					done(E);
+				}
 			}
 		});
 	}));

@@ -1,5 +1,25 @@
 const mongoose = require('mongoose');
 functions = {
+	sanitize: function(what)
+	{
+		//escape code
+		what = what.replace(/&/g, '&amp;')
+				.replace(/"/g, '&quot;')
+				.replace(/'/g, '&#x27;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/\//g, '&#x2F;')
+				.replace(/\\/g, '&#x5C;')
+				.replace(/`/g, '&#96;');
+		let idx = what.length - 1, pattern = new RegExp("/\s/");
+		while (idx >= 0 && pattern.test(what[idx]))
+		{
+			idx--;
+		}
+
+		what = idx < what.length ? what.substr(0, idx + 1) : what;
+		return what.replace(/^\s+/g, '');
+	},
 	isAdmin: function(user)
 	{
 		return user.access >= 10;
@@ -11,8 +31,23 @@ functions = {
 		{
 			//Set redirect URL to the requested url
 			req.session.redirectTo = req.originalUrl;
-			//Redirect to the Google Authentication page
-			res.redirect('/auth/google');
+			if(req.method.toLowerCase() == "post" && req.body)
+			{
+				formData = '';
+				blacklist = ['csrf'];; //@todo: update
+				for(el in req.body)
+				{
+					if(blacklist.indexOf(el) < 0)
+						formData += `${this.config.functions.sanitize(el)}: ${this.config.functions.sanitize(req.body[el]) || '[no value]'}<br/>\n`;
+				}
+				res.locals.content = `<h1 class='center'>You've been logged out</h1><p class='flow-text'>It looks like you were trying to save some data. We didn't save the data (because we don't know who you are), so if it's important to you, take a second to save it.</p><p class="flow-text center">Done? <a class="btn waves-effect" href="/auth/google">Login!</a></p><p>Here is the raw form data that was received:</p><blockquote>${formData}</blockquote></p>`;
+				res.render('card');
+			}
+			else
+			{
+				//Redirect to the Google Authentication page
+				res.redirect('/auth/google');
+			}
 		}
 		else
 		{
@@ -31,8 +66,24 @@ functions = {
 		{
 			//Set redirect URL to the requested url
 			req.session.redirectTo = req.originalUrl;
-			//Redirect to the Google Authentication page
-			res.redirect('/auth/google');
+
+			if(req.method.toLowerCase() == "post" && req.body)
+			{
+				formData = '';
+				blacklist = ['csrf'];; //@todo: update
+				for(el in req.body)
+				{
+					if(blacklist.indexOf(el) < 0)
+						formData += `${this.config.functions.sanitize(el)}: ${this.config.functions.sanitize(req.body[el]) || '[no value]'}<br/>\n`;
+				}
+				res.locals.content = `<h1 class='center'>You've been logged out</h1><p class='flow-text'>It looks like you were trying to save some data. We didn't save the data (because we don't know who you are), so if it's important to you, take a second to save it.</p><p class="flow-text center">Done? <a class="btn waves-effect" href="/auth/google">Login!</a></p><p>Here is the raw form data that was received:</p><blockquote>${formData}</blockquote></p>`;
+				res.render('card');
+			}
+			else
+			{
+				//Redirect to the Google Authentication page
+				res.redirect('/auth/google');
+			}
 		}
 		else next();
 	},

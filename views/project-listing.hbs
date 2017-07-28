@@ -8,7 +8,7 @@
 	{{/if}}
 </h1>
 <div class="fixed-action-btn">
-	<a class="btn-floating waves-effect btn-large red accent-4 large help-fab hoverable" href="/project/create" title="Create a project"><i class="material-icons large">create</i></a>
+	<a class="btn-floating waves-effect btn-large red accent-4 large help-fab hoverable" href="/project/create" title="Create a project"><i class="material-icons large">add</i></a>
 </div>
 <div class="project-container section">
 	{{#each projects}}
@@ -16,13 +16,16 @@
 		<div class="container section project">
 			<div class="card">
 				<div class="card-content">
-					{{#if ../admin}}
+					{{#if (renderProjectApproval ../admin this)}}
 					<div class="row">
-						<div class="col s12 m4 center"><a href="/admin/project/{{this.id}}/approve" class="btn waves-effect waves-light green">Approve</a></div>
-						<div class="col s12 m4 center"><a href="/admin/project/{{this.id}}/edit" class="btn waves-effect waves-lignt">Edit</a></div>
-						<div class="col s12 m4 center"><a href="/admin/project/{{this.id}}/reject" class="btn waves-effect waves-light red">Reject</a></div>
+						<div class="col s12 m4 center"><a href="/admin/project/{{this._id}}/approve" class="btn waves-effect waves-light green">Approve</a></div>
+						<div class="col s12 m4 center"><a href="/admin/project/{{this._id}}/edit" class="btn waves-effect waves-lignt">Edit</a></div>
+						<div class="col s12 m4 center"><a href="/admin/project/{{this._id}}/reject" class="btn waves-effect waves-light red">Reject</a></div>
 					</div>
 					{{/if}}
+					{{#unless (public this)}}
+						<a class="right" href="/faq/#unapproved/visibility" target="_blank"><i class="material-icons red-text" title="Project not approved - only you can see it!">info</i></a>
+					{{/unless}}
 					<h2 class="flow-text center underlined"><strong>{{{this.name}}}</strong></h2>
 					<div class="row valign-wrapper">
 						<div class="col s6 center valign">
@@ -59,7 +62,7 @@
 						<p class="flow-text">You've applied to this! <a href="/profile/application/{{this.applied}}/view" class="btn">View Application</a></p>
 						{{else}}
 							{{#if ../isSingle}}
-								<p class="flow-text">Interested? <a class="btn waves-effect waves-light" href="/project/{{this._id}}-{{get_slug this.name}}/apply">Apply!</a></p>
+								<p class="flow-text">Interested? <a class="btn {{#unless (public this)}}disabled{{/unless}} waves-effect waves-light" href="/project/{{this._id}}-{{get_slug this.name}}/apply">Apply!</a><small><br/>You cannot apply to this project right now <a href="/faq/#unapproved/visibility" target="_blank">Learn More</a></small></p>
 							{{else}}
 								<p class="flow-text">Interested? <a class="btn waves-effect waves-light" href="/project/{{this._id}}-{{get_slug this.name}}/view">View Project!</a></p>
 							{{/if}}

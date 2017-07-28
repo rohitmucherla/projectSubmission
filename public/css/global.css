@@ -1,6 +1,7 @@
 /*Global CSS - CSS that is used throughout the site*/
 .underlined {text-decoration: underline;}
 .materialboxedcenter {margin:0 auto;}
+input.validate+label {text-align:left;}
 .header-logout i
 {
 	display:inline-block !important;
@@ -28,6 +29,10 @@ header.global a:hover {background:rgba(33,33,33,0.2);}
 }
 .profile-edit:hover {background:rgba(25,25,25,0.2);}
 .profile-main {margin-top:10vh;}
+.profile-main .card {
+	height:auto !important; /*Override card default*/
+	display:grid;
+}
 .user-profile-image	{
 	height:10vh;
 	width:10vh;

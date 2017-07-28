@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 functions = {
+	isAdmin: function(user)
+	{
+		return user.access >= 10;
+	},
 	requireAdminLogin: function(req,res,next)
 	{
 		//Passport middleware adds user to the req object. If it doesn't exist, the client isn't logged in
@@ -13,7 +17,7 @@ functions = {
 		else
 		{
 			//Admins have access > 10
-			if(req.user.access < 10)
+			if(!isAdmin(req.user))
 				res.render('admin-block');
 			//Move on
 			else

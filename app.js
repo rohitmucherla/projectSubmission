@@ -147,7 +147,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(expressValidator(
 {
 	customValidators: {
-		isArray: function(value){
+		isArray: function(value)
+		{
 			return Array.isArray(value);
 		},
 		between(value,min,max)

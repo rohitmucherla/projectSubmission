@@ -1,6 +1,14 @@
 {{#unless user.approved}}
 	<div class="error red-text flow-text center">Your profile is not approved. Your actions are limited</div>
 {{/unless}}
+{{#if errors}}
+	<div class="error-message center red-text container">
+		Your submission had 1 or more errors:<br/>
+		{{#each errors}}
+			<span class="error left"> - {{this.msg}}</span><br/>
+		{{/each}}
+	</div>
+{{/if}}
 <div class="fixed-action-btn">
 	<a class="btn-floating btn-large red accent-4 large help-fab hoverable" href="/faq#profile-edit" title="help">?</a>
 </div>
@@ -12,30 +20,31 @@
 				<!--<a href="/faq#profile-edit" target="_blank">What can('t) I edit</a>-->
 				<p class="center"><img src="{{user.pic}}" alt="{{user.name.full}}'s profile picture" class="circle responsive-img user-profile-image z-depth-5 hoverable"/></p>
 				<p class="center large"><strong>{{user.name.full}}</strong></p>
+				<p class="center flow-text"><em>All fields are optional</em></p>
 				<form class="center" action="/profile/edit" method="POST">
 					<div class="row">
 						<div class="input-field col s12 m12">
-							<input autofocus type="text" name="headline" value="{{{user.headline}}}" class="charcount" data-length="120" />
+							<input autofocus type="text" name="headline" pattern=".{10,120}" value="{{{user.headline}}}" class="charcount validate" data-length="120" />
 							<label for="headline">Headline</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s12 m4">
-							<input type="text" name="github" pattern="^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}$" value="{{user.github}}" class="validate" />
+							<input type="text" name="github" pattern="^[a-zA-Z\d](?:[a-zA-Z\d]|-(?=[a-zA-Z\d])){0,38}$" value="{{#if errors}}{{errors.github.value}}{{else}}{{user.github}}{{/if}}" class="validate" />
 							<label for="github">Github username</label>
 						</div>
 						<div class="input-field col s12 m4">
-							<input type="text" name="slack" pattern="^[a-z0-9][a-z0-9._-]*$" value="{{user.slack}}" class="validate" />
+							<input type="text" name="slack" pattern="^[a-z0-9][a-z0-9._-]*$" value="{{#if errors}}{{errors.slack.value}}{{else}}{{user.slack}}{{/if}}" class="validate" />
 							<label for="slack">Slack username</label>
 						</div>
 						<div class="input-field col s12 m4">
-							<input type="url" name="website" value="{{user.website}}" class="validate" />
+							<input type="url" name="website" value="{{#if errors}}{{errors.website.value}}{{else}}{{user.website}}{{/if}}" class="validate" />
 							<label for="website">Website</label>
 						</div>
 					</div>
 					<div class="row">
 						<div class="input-field col s4 offset-s4">
-							<input type="text" name="company" value="{{user.company}}" />
+							<input type="text" name="company" value="{{#if errors}}{{errors.company.value}}{{else}}{{user.company}}{{/if}}" />
 							<label for="company">Company</label>
 						</div>
 					</div>

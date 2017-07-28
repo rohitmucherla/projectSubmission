@@ -25,26 +25,32 @@ let projectSchema = mongoose.Schema(
 		required:[true,'An abstract is required']
 	},
 	owners:
-	{
-		type:[mongoose.Schema.Types.ObjectId],
-		required: true,
-		ref: 'User',
-		default: []
-	},
+	[
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			required: true,
+			ref: 'User',
+			default: []
+		}
+	],
 	managers:
-	{
-		type: [mongoose.Schema.Types.ObjectId],
-		required: false,
-		ref: 'User',
-		default: []
-	},
+	[
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			required: false,
+			ref: 'User',
+			default: []
+		}
+	],
 	developers:
-	{
-		type: [mongoose.Schema.Types.ObjectId],
-		required: false,
-		ref: 'User',
-		default: []
-	},
+	[
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			required: false,
+			ref: 'User',
+			default: []
+		}
+	],
 	created:
 	{
 		type: Date,

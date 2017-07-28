@@ -49,15 +49,20 @@ let userSchema = mongoose.Schema(
 	},
 	access: {required:true, type:Number, default: 0},
 	email: String,
-	workingOn:{
-		type: [mongoose.Schema.Types.ObjectId],
-		ref: 'Project'
-	},
+	workingOn:
+	[
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Project'
+		}
+	],
 	owner:
-	{
-		type: [mongoose.Schema.Types.ObjectId],
-		ref: 'Project'
-	},
+	[
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Project'
+		}
+	],
 	approved: {type:Boolean,required:true,default:false},
 	profileComplete:{required:true,type:Boolean,default:false},
 	pic:{required:true,type:String}

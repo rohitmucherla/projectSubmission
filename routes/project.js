@@ -1,4 +1,5 @@
 const express = require('express'),
+	console = require('tracer').colorConsole(),
 	router = express.Router(),
 	getSlug = require('speakingurl'),
 	config = require('../config');
@@ -16,13 +17,26 @@ router.get('/',function(req, res)
 //User wants to create a project
 router.get('/create',function(req,res)
 {
-	res.locals.title = "Create a project";
-	res.render('project-create',{user:req.user});
+	if(req.user.approved)
+	{
+		res.locals.title = "Create a project";
+		res.render('project-create',{user:req.user});
+	}
+	else
+	{
+		res.locals.content = "<h1 class='center'>Access Denied</h1><p class='flow-text center'>You cannot create projects until your profile is approved.</p>";
+		res.render('card');
+	}
 })
 
 //User has submitted form with project details
 router.post('/create',function(req,res)
 {
+	if(!req.user.approved)
+	{
+		res.status(403).render('admin-block');
+		return;
+	}
 	//Validate name
 	req.checkBody('name','Name is required')
 		.notEmpty()
@@ -62,56 +76,101 @@ router.post('/create',function(req,res)
 			project.name = req.sanitize('name').escapeAndTrim();
 			project.description = req.sanitize('description').escapeAndTrim();
 			project.abstract = req.sanitize('abstract').escapeAndTrim();
-			project.owners = [req.user.gid]; //As array
+			project.owners = [config.functions.mongooseId(req.user._id)]; //As array
 			project.created = Date.now() + 15; //Add 15ms for execution time
 			project.languages =  (langs == "") ? [] : langs;
 			project.status = 0; //Unapproved
 			project.paid = req.body.paid == "on" ? 1 : 0;
 			project.numberOfPeople = req.sanitize('number-of-people').toInt();
-			project.save(function(err)
+			project.save().then(function()
 			{
-				if(err)
-					res.status(500).render('error',{error:err}); //@todo: Create error page for saving
-				else
+				User.findOne()
+					.where('gid').equals(req.user.gid)
+					.exec()
+					.then(function(user)
 				{
-					req.user.owner.push(project.id);
-					req.user.save(function(err)
+					if(user)
 					{
-						if(err)
-							res.status(500).render('error',{error:err}); //@todo: Create error page for saving
-						else
-							res.redirect(`/project/${project.id}`);
-					})
-				}
-			});
+						user.owner.push(config.functions.mongooseId(project._id));
+						user.save().then(function()
+						{
+								res.redirect(`/project/${project.id}`);
+						}).catch((err)=>{res.status(500).render('error',{error:err})})
+					}
+					else
+					{
+						console.error('***CRITICAL ERROR***:','Nonexistant user created a project! User:',req.user,'Project:',project);
+						res.status(500).render('admin-block');
+					}
+				})
+			}).catch((err)=>{res.status(500).render('error',{error:err})})
 		}
 	});
 });
 
 router.get('/:id',function(req,res)
 {
-	Project.findOne({_id:req.params.id}).lean().exec().then(function(project)
+	let id = config.functions.mongooseId(req.params.id);
+	res.locals.single = true;
+	if(!id)
 	{
-		res.redirect(`/project/${req.params.id}-${getSlug(project.name)}/view`);
-	}).catch((error)=>{res.status(500).render('error',{error:error})});
+		res.render('project-404');
+	}
+	else
+	{
+		Project.findById(id)
+			.lean()
+			.exec()
+			.then(function(project)
+		{
+			if(project)
+			{
+				res.redirect(`/project/${req.params.id}-${getSlug(project.name)}/view`);
+			}
+			else
+			{
+				res.render('project-404');
+			}
+		}).catch((error)=>{res.status(500).render('error',{error:error})});
+	}
 });
 
 router.get('/:id-:name/view',function(req,res)
 {
-	Project.findOne({_id:req.params.id}).lean().exec().then(function(project)
+	let id = config.functions.mongooseId(req.params.id);
+	res.locals.single = true;
+	if(!id)
 	{
+		res.render('project-404');
+		return;
+	}
+	Project.findById(id)
+		.lean()
+		.exec()
+		.then(function(project)
+	{
+		if(!project)
+		{
+			res.render('project-404');
+			return;
+		}
+		if(!config.functions.canRenderProject(project,req.user))
+		{
+			res.locals.content="<h1 class='center'>Access Denied</h1><p class='flow-text'>You don't have permission to view this project</p>"
+			res.status(403).render('card');
+		}
 		if(req.params.name == getSlug(project.name))
 		{
 			res.locals.title = `${project.name} project details`;
 			Application.findOne()
-				.where('project-id').in(req.params.id)
-				.where('user-id').in(req.user.gid)
 				.lean()
+				.where('project-id').equals(config.functions.mongooseId(req.params.id))
+				.where('user-id').equals(req.user.gid)
 				.exec()
 				.then(function(app)
 			{
 				if(app)
-					project.applied = app.identifier;
+					project.applied = app._id;
 				if(res.locals.back && (res.locals.back.name == project.name))
 				{
 					delete req.session.back;
@@ -119,7 +178,9 @@ router.get('/:id-:name/view',function(req,res)
 				}
 				else
 					req.session.back = {name:project.name,url:`/project/${req.params.id}-${getSlug(project.name)}/view`};
-				res.render('project-listing',{projects:[project],isSingle:true});
+				res.locals.projects = [project];
+				res.locals.single = true;
+				res.render('project-listing');
 			});
 		}
 		else
@@ -131,15 +192,43 @@ router.get('/:id-:name/view',function(req,res)
 
 router.get('/:id/view',function(req,res)
 {
-	Project.findOne({_id:req.params.id}).lean().exec().then(function(project)
+	let id = config.functions.mongooseId(req.params.id);
+	if(!id)
 	{
-		res.redirect(`/project/${req.params.id}-${getSlug(project.name)}/view`);
+		res.locals.single = true;
+		res.render('project-404');
+		return;
+	}
+	Project.findById(id)
+		.lean()
+		.exec()
+		.then(function(project)
+	{
+		if(project)
+			res.redirect(`/project/${req.params.id}-${getSlug(project.name)}/view`);
+		else
+		{
+			res.locals.sinlge = true;
+			res.render('project-404');
+		}
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
 router.get('/:id-:name/apply',function(req,res)
 {
-	Application.findOne({"user-id":req.user.gid,"project-id":req.params.id}).lean().exec().then(function(results)
+	let id = config.functions.mongooseId(req.params.id);
+	if(!id)
+	{
+		res.locals.single = true;
+		res.render('project-404');
+		return;
+	}
+	Application.findOne()
+		.lean()
+		.where('project-id').equals(config.functions.mongooseId(req.params.id))
+		.where('user-id').equals(req.user.gid)
+		.exec()
+		.then(function(results)
 	{
 		if(results)
 		{
@@ -147,10 +236,27 @@ router.get('/:id-:name/apply',function(req,res)
 		}
 		else
 		{
-			Project.findOne().where('_id').in(req.params.id).lean().exec().then(function(project)
+			Project.findById(id)
+				.lean()
+				.exec()
+				.then(function(project)
 			{
-				res.locals.title = `Apply to work on ${project.name}`;
-				res.render('project-apply',{project:project});
+				if(!config.functions.canRenderProject(project,req.user))
+				{
+					res.locals.content="<h1 class='center'>Access Denied</h1><p class='flow-text'>You don't have permission to apply to this project</p>"
+					res.status(403).render('card');
+				}
+				if(project)
+				{
+					res.locals.title = `Apply to work on ${project.name}`;
+					res.locals.project = project;
+					res.render('project-apply');
+				}
+				else
+				{
+					res.locals.single = true;
+					res.render('project-404');
+				}
 			});
 		}
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
@@ -158,25 +264,68 @@ router.get('/:id-:name/apply',function(req,res)
 
 router.get('/:id/apply',function(req,res)
 {
-	Project.findOne({id:req.params.id}).lean().exec().then(function(project)
+	id = config.functions.mongooseId(req.params.id);
+	if(!id)
 	{
-		res.redirect(`/project/${req.params.id}-${getSlug(project.name)}/apply`);
+		res.locals.single = true;
+		res.render('project-404');
+		return;
+	}
+	Project.findById(id)
+		.lean()
+		.exec()
+		.then(function(project)
+	{
+		if(project)
+		{
+			res.redirect(`/project/${req.params.id}-${getSlug(project.name)}/apply`);
+		}
+		else
+		{
+			res.locals.single = true;
+			res.render('project-404');
+		}
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
 router.post('/:id-:name/apply',function(req,res)
 {
-	Application.findOne({"user-id":req.user.gid,"project-id":req.params.id}).lean().exec().then(function(results)
+	let id = config.functions.mongooseId(req.params.id);
+	if(!id)
+	{
+		res.locals.single = true;
+		res.render('project-404');
+		return;
+	}
+	Application.findOne()
+		.where("project-id").equals(id)
+		.where("user-id").equals(req.user.gid)
+		.populate('project-id')
+		.lean()
+		.exec()
+		.then(function(results)
 	{
 		if(results)
 		{
-			res.redirect(`/profile/application/${req.params.id}/edit`);
+			req.session.applicationData = req.body;
+			req.flash('warning',`You have already applied to <strong>${results.project}</strong>.`)
+			res.redirect(`/profile/application/${req.params.id}/edit?containsData=1`);
 		}
 		else
 		{
-			Project.findOne().lean().exec().then(function(data)
+			Project
+				.findById(id)
+				.lean()
+				.exec()
+				.then(function(project)
 			{
-				if(data.length)
+				if(!config.functions.canRenderProject(project,req.user))
+				{
+					res.locals.content="<h1 class='center'>Access Denied</h1><p class='flow-text'>You don't have permission to apply to this project</p>"
+					res.status(403).render('card');
+					return;
+				}
+				if(data)
 				{
 					req.checkBody('level-of-interest','Level of Interest is required')
 						.notEmpty()
@@ -195,10 +344,8 @@ router.post('/:id-:name/apply',function(req,res)
 						//There are errors
 						if(!result.isEmpty())
 						{
-							res.render('project-apply',
-							{
-								errors:result.mapped(),
-							});
+							res.locals.errors = result.mapped(); //@todo check if submitted data is persistant for the user
+							res.render('project-apply');
 						}
 						else
 						{
@@ -214,19 +361,18 @@ router.post('/:id-:name/apply',function(req,res)
 							application["notes"] = req.sanitize('notes').escapeAndTrim();
 							application["status"] = 0;
 							application["statusNotes"] = "Waiting for review";
-							application.save(function(err)
+							application.save().then(function()
 							{
-								if(err)
-									res.status(500).render('error',{error:err}); //@todo: Create error page for saving
-								else
-									res.redirect(`/profile/application/${application.identifier}`);
-							});
+								res.redirect(`/profile/application/${application._id}`);
+							}).catch((err)=>{res.status(500).render('error',{error:err})});
 						}
 					});
 				}
 				else
 				{
-					req.render('project-404');
+					console.warn(`Could not find project ${id}`)
+					res.locals.single = true;
+					res.render('project-404');
 				}
 			});
 		}

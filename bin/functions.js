@@ -34,11 +34,11 @@ functions = {
 			if(req.method.toLowerCase() == "post" && req.body)
 			{
 				formData = '';
-				blacklist = ['csrf'];; //@todo: update
+				blacklist = ['csrf']; //@todo: update
 				for(el in req.body)
 				{
 					if(blacklist.indexOf(el) < 0)
-						formData += `${this.config.functions.sanitize(el)}: ${this.config.functions.sanitize(req.body[el]) || '[no value]'}<br/>\n`;
+						formData += `${functions.sanitize(el)}: ${functions.sanitize(req.body[el]) || '[no value]'}<br/>\n`;
 				}
 				res.locals.content = `<h1 class='center'>You've been logged out</h1><p class='flow-text'>It looks like you were trying to save some data. We didn't save the data (because we don't know who you are), so if it's important to you, take a second to save it.</p><p class="flow-text center">Done? <a class="btn waves-effect" href="/auth/google">Login!</a></p><p>Here is the raw form data that was received:</p><blockquote>${formData}</blockquote></p>`;
 				res.render('card');
@@ -70,11 +70,11 @@ functions = {
 			if(req.method.toLowerCase() == "post" && req.body)
 			{
 				formData = '';
-				blacklist = ['csrf'];; //@todo: update
+				blacklist = ['csrf']; //@todo: update
 				for(el in req.body)
 				{
 					if(blacklist.indexOf(el) < 0)
-						formData += `${this.config.functions.sanitize(el)}: ${this.config.functions.sanitize(req.body[el]) || '[no value]'}<br/>\n`;
+						formData += `${functions.sanitize(el)}: ${functions.sanitize(req.body[el]) || '[no value]'}<br/>\n`;
 				}
 				res.locals.content = `<h1 class='center'>You've been logged out</h1><p class='flow-text'>It looks like you were trying to save some data. We didn't save the data (because we don't know who you are), so if it's important to you, take a second to save it.</p><p class="flow-text center">Done? <a class="btn waves-effect" href="/auth/google">Login!</a></p><p>Here is the raw form data that was received:</p><blockquote>${formData}</blockquote></p>`;
 				res.render('card');
@@ -99,6 +99,21 @@ functions = {
 			ret = undefined;
 		}
 		return ret;
+	},
+	canRenderProject: function(project,user)
+	{
+		//@todo - check what .map returns - maybe we don't need to allocate an extra array for it.
+		allowed = [];
+		project.owners
+			.concat(project.managers)
+			.concat(project.developers)
+			.map(function(user)
+		{
+			allowed.push(user.toString());
+		});
+		//@endtodo
+		userAccess = allowed.includes(user._id.toString());
+		return userAccess || !(project.status == 0 && !functions.isAdmin(user));// || user.access >= 10;
 	}
 }
 module.exports = functions;

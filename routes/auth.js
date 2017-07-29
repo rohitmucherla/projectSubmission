@@ -9,7 +9,8 @@ require('../bin/passport')(passport);
 //Nothing important for this route
 router.get('/', function(req, res)
 {
-	res.render('index',{title:"The Login Page"});
+	res.locals.content = "<h1 class='center'>Aggie Coding Club</h1><p class='flow-text center'><a class='btn btn-large waves-effect' href='/auth/google'>Login</a></p>"
+	res.render('card');
 });
 
 //Authenticate using Google. Passport handles the logistics of it!

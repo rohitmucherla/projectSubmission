@@ -103,6 +103,12 @@ functions = {
 	canRenderProject: function(project,user)
 	{
 		//@todo - check what .map returns - maybe we don't need to allocate an extra array for it.
+		/*
+		* @todo: figure out if we can improve efficiency here
+		*  - user._id is a mongoose ObejctID
+		*  - project.[owners,managers,developers] are [ObjectID]s,
+		*  - project.owners[{{userIndex}}] != user._id
+		*/
 		allowed = [];
 		project.owners
 			.concat(project.managers)
@@ -113,7 +119,7 @@ functions = {
 		});
 		//@endtodo
 		userAccess = allowed.includes(user._id.toString());
-		return userAccess || !(project.status == 0 && !functions.isAdmin(user));// || user.access >= 10;
+		return userAccess || (project.status == 0 && functions.isAdmin(user));// || user.access >= 10;
 	}
 }
 module.exports = functions;

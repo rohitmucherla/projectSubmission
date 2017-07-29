@@ -47,26 +47,7 @@ hbs.registerHelper('status',function(value)
 	}
 });
 
-hbs.registerHelper('canRenderProject',function(admin,project,user)
-{
-	/*
-	* @todo: figure out if we can improve efficiency here
-	*  - user._id is a mongoose ObejctID
-	*  - project.[owners,managers,developers] are [ObjectID]s,
-	*  - project.owners[{{userIndex}}] != user._id
-	*/
-	allowed = [];
-	project.owners
-		.concat(project.managers)
-		.concat(project.developers)
-		.map(function(user)
-	{
-		allowed.push(user.toString());
-	});
-	//@endtodo
-	userAccess = allowed.includes(user._id.toString());
-	return userAccess || !(project.status == 0 && !admin);// || user.access >= 10;
-});
+hbs.registerHelper('canRenderProject',config.functions.canRenderProject);
 
 hbs.registerHelper('user-nav',function(userAccess)
 {

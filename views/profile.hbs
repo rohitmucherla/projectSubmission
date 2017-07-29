@@ -17,7 +17,7 @@
 				<p class="center"><img src="{{userData.pic}}" alt="{{userData.name.full}}'s profile picture" class="circle responsive-img user-profile-image z-depth-5 hoverable"/></p>
 				<p class="center large"><strong>{{userData.name.full}}</strong></p>
 				{{#if userData.headline}}
-					<p class="center headline">{{userData.headline}}</p>
+					<p class="center headline">{{{userData.headline}}}</p>
 				{{else}}
 					{{#if (sameUser user userData)}}
 						<p class="center headline">(No Headline) &nbsp;<a href="/profile/edit#headline">Edit</a></p>

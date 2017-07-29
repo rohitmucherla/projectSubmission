@@ -1,14 +1,6 @@
 {{#unless user.approved}}
 	<div class="error red-text flow-text center">Your profile is not approved. Your actions are limited</div>
 {{/unless}}
-{{#if errors}}
-	<div class="error-message center red-text container">
-		Your submission had 1 or more errors:<br/>
-		{{#each errors}}
-			<span class="error left"> - {{this.msg}}</span><br/>
-		{{/each}}
-	</div>
-{{/if}}
 <div class="fixed-action-btn">
 	<a class="btn-floating btn-large red accent-4 large help-fab hoverable" href="/faq#profile-edit" title="help">?</a>
 </div>
@@ -21,10 +13,20 @@
 				<p class="center"><img src="{{user.pic}}" alt="{{user.name.full}}'s profile picture" class="circle responsive-img user-profile-image z-depth-5 hoverable"/></p>
 				<p class="center large"><strong>{{user.name.full}}</strong></p>
 				<p class="center flow-text"><em>All fields are optional</em></p>
-				<form class="center" action="/profile/edit" method="POST">
+				{{#if errors}}
+					<div class="error-message center red-text container section">
+						Your submission had 1 or more errors:<br/>
+						{{#each errors}}
+							{{#if this.msg}}
+								<span class="error left"> - {{this.msg}}</span><br/>
+							{{/if}}
+						{{/each}}
+					</div>
+				{{/if}}
+				<form class="center" action="/profile/edit" method="post">
 					<div class="row">
 						<div class="input-field col s12 m12">
-							<input autofocus type="text" name="headline" pattern=".{10,120}" value="{{{user.headline}}}" class="charcount validate" data-length="120" />
+							<input autofocus type="text" name="headline" pattern=".{10,120}" value="{{#if errors}}{{{errors.headline.value}}}{{else}}{{{user.headline}}}{{/if}}" class="charcount validate" data-length="120" />
 							<label for="headline">Headline</label>
 						</div>
 					</div>

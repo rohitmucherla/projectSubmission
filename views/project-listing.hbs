@@ -52,7 +52,7 @@
 					<div class="center section container">
 						<p class="flow-text"><span class="title"><strong>Abstract:</strong></span> {{{this.abstract}}}</p>
 					</div>
-					{{#if ../isSingle}}
+					{{#if ../single}}
 					<div class="center section container">
 						<p class="flow-text"><span class="title"><strong>Description:</strong></span> {{{this.description}}}</p>
 					</div>
@@ -61,7 +61,7 @@
 						{{#if this.applied}}
 						<p class="flow-text">You've applied to this! <a href="/profile/application/{{this.applied}}/view" class="btn">View Application</a></p>
 						{{else}}
-							{{#if ../isSingle}}
+							{{#if ../single}}
 								<p class="flow-text">Interested? <a class="btn {{#unless (public this)}}disabled{{/unless}} waves-effect waves-light" href="/project/{{this._id}}-{{get_slug this.name}}/apply">Apply!</a><small><br/>You cannot apply to this project right now <a href="/faq/#unapproved/visibility" target="_blank">Learn More</a></small></p>
 							{{else}}
 								<p class="flow-text">Interested? <a class="btn waves-effect waves-light" href="/project/{{this._id}}-{{get_slug this.name}}/view">View Project!</a></p>

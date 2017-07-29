@@ -22,7 +22,9 @@ let config =
 	base: "",
 	port: 4539,
 	functions: require('./bin/functions'),
-	LIMIT: 10
+	LIMIT: 10,
+	slack: 'aggie-coding-club',
+	email: 'project-submission@projects.hexr.org'
 }
 
 module.exports = config

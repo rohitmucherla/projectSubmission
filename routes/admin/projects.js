@@ -1,16 +1,11 @@
 const express = require('express'),
-	console = require('tracer').colorConsole(),
-	router = express.Router(),
-	config = require('../config');
-
-let Project = require(`../${config.db.path}/project`),
-	Applicaton = require(`../${config.db.path}/application`);
-
-router.use(config.functions.requireLogin);
+	config = require('../../config'),
+	loop = require('../../bin/project-loop'),
+	router = express.Router();
 
 router.get('/',function(req, res)
 {
-	loop(1,config.LIMIT,req.user.gid).then(function(projectData)
+	loop(1,config.LIMIT).then(function(projectData)
 	{
 		for(key in projectData)
 		{
@@ -30,17 +25,15 @@ router.get('/',function(req, res)
 	});
 });
 
-//@todo: normalize query (see / logic)
 router.get('/:offset',function(req,res)
 {
 	if(!parseInt(req.params.offset))
 	{
-		//assume the input was meant for project and move on with life
-		res.redirect(`/project/${req.params.offset}`);
+		res.status(404).render('404');
 		return;
 	}
 
-	loop(req.params.offset,config.LIMIT,req.user.gid).then(function(projectData)
+	loop(1,config.LIMIT).then(function(projectData)
 	{
 		for(key in projectData)
 		{

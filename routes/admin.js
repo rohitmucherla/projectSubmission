@@ -7,9 +7,9 @@ const express = require('express'),
 	router = express.Router(),
 	config = require('../config'), //Global Configuration
 	User = require(`../${config.db.path}/user`), //User Database Schema
-	Apps = require(`../${config.db.path}/application`);
+	Application = require(`../${config.db.path}/application`);
 
-let projectRoute = require('./admin/project'),
+let projectsRoute = require('./admin/projects'),
 	applicationRoute = require('./admin/application'),
 	singleUserRoute = require('./admin/singleUser')
 	userRoute = require('./admin/user');
@@ -23,21 +23,44 @@ router.use(function(req,res,next)
 router.use('/user',singleUserRoute);
 router.use('/users',userRoute);
 router.use('/application',applicationRoute);
-router.use('/project',projectRoute);
+router.use('/projects',projectsRoute);
 
 router.get('/',function(req, res)
 {
-	res.render('admin-index');
+	res.locals.adminStats = {};
+	User.find()
+		.where('approved').equals('false')
+		.lean()
+		.count()
+		.exec()
+		.then(function(unapprovedUsers)
+	{
+		res.locals.adminStats.unapprovedUsers = unapprovedUsers;
+		Project.find()
+			.where('status').equals(0)
+			.lean()
+			.count()
+			.exec()
+			.then(function(unapprovedProjects)
+		{
+			res.locals.adminStats.unapprovedProjects = unapprovedProjects;
+			Application.find()
+				.where()
+				.lean()
+				.count()
+				.exec()
+				.then(function(pendingApplications)
+			{
+				res.locals.adminStats.pendingApplications = pendingApplications
+				res.render('admin-index');
+			}).catch((e)=>{res.status(500).render('error',{error:e})});
+		}).catch((e)=>{res.status(500).render('error',{error:e})});
+	}).catch((e)=>{res.status(500).render('error',{error:e})});
 });
 
 router.get('/projects',function(req,res)
 {
 	res.send('Project for loop');
-});
-
-router.get('/project/:id',function(req,res)
-{
-	res.send('Single project info page');
 });
 
 router.get('/projects/unapproved',function(req,res)
@@ -60,7 +83,6 @@ router.get('/projects/unapproved',function(req,res)
 					{needed:false};
 				//set the projects
 				res.locals.projects = projects;
-				res.locals.admin = true;
 				//render the projects
 				res.render('project-listing');
 			});
@@ -70,7 +92,7 @@ router.get('/projects/unapproved',function(req,res)
 
 router.get('/projects/assigner',function(req,res)
 {
-	Apps.find()
+	Application.find()
 		.lean()
 		.limit(config.LIMIT)
 		.exec()
@@ -80,7 +102,8 @@ router.get('/projects/assigner',function(req,res)
 		{
 			console.warn(a,b,c);
 		});
-		res.render('admin-project-assigner',{apps:app});
+		res.locals.Application = [app];
+		res.render('admin-project-assigner');
 	});
 });
 

@@ -1,12 +1,4 @@
-<h1 class="center">
-	{{#if headerTitle}}
-		{{headerTitle}}
-	{{else}}
-		{{#unless single}}
-		Projects
-		{{/unless}}
-	{{/if}}
-</h1>
+{{#unless single}}<h1 class="center">{{#if header}}{{header}}{{else}}Projects{{/if}}</h1>{{/unless}}
 <div class="fixed-action-btn">
 	<a class="btn-floating waves-effect btn-large red accent-4 large help-fab hoverable" href="/project/create" title="Create a project"><i class="material-icons large">add</i></a>
 </div>

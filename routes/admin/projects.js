@@ -14,7 +14,7 @@ router.get('/',function(req, res)
 		res.locals.active = {
 			all:true
 		};
-		res.locals.headerTitle = "Projects";
+		res.locals.header = "Projects";
 		res.locals.title = "Projects";
 		res.render('project-listing');
 	}).catch(function(error)
@@ -41,7 +41,7 @@ router.get('/approved',function(req,res)
 		res.locals.active = {
 			approved:true
 		};
-		res.locals.headerTitle = "Approved Projects";
+		res.locals.header = "Approved Projects";
 		res.locals.title = "Approved Projects";
 		res.render('project-listing');
 	}).catch(function(error)
@@ -74,7 +74,7 @@ router.get('/approved/:offset',function(req,res)
 		res.locals.active = {
 			approved:true
 		};
-		res.locals.headerTitle = "Approved Projects";
+		res.locals.header = "Approved Projects";
 		res.locals.title = "Approved Projects";
 		res.render('project-listing');
 	}).catch((error) =>
@@ -101,7 +101,7 @@ router.get('/unapproved',function(req,res)
 		res.locals.active = {
 			unapproved:true
 		};
-		res.locals.headerTitle = "Unapproved Projects";
+		res.locals.header = "Unapproved Projects";
 		res.locals.title = "Unapproved Projects";
 		res.render('project-listing');
 	}).catch(function(error)
@@ -134,7 +134,7 @@ router.get('/unapproved/:offset',function(req,res)
 		res.locals.active = {
 			unapproved:true
 		};
-		res.locals.headerTitle = "Unapproved Projects";
+		res.locals.header = "Unapproved Projects";
 		res.locals.title = "Unapproved Projects";
 		res.render('project-listing');
 	}).catch((error) =>
@@ -168,7 +168,7 @@ router.get('/:offset',function(req,res)
 			all:true
 		};
 		res.locals.title = "Projects";
-		res.locals.headerTitle = "Projects";
+		res.locals.header = "Projects";
 		res.render('project-listing');
 	}).catch((error) =>
 	{

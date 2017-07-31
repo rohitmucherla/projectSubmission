@@ -16,14 +16,18 @@ function queryProject(page = 1,limit = config.LIMIT, user, admin = false)
 		//Query: SELECT * FROM `Project` WHERE (status=`1`) OR (status=`0` AND [User in owners OR managers OR developers])
 		//Get the number of projects in the db
 		//note: this is not an expensive calculation
-		orParams = [
-			{'status':1},
-			{$and:[{'status':0},{'owners':user.toString()}]},
-			{$and:[{'status':0},{'managers':user.toString()}]},
-			{$and:[{'status':0},{'developers':user.toString()}]}
-		]
+		let orParams;
 		if(admin)
 			orParams = [{'status':{$gte:-100}}] //-100 is arbitrary; 0 is probably fine
+		else
+		{
+			orParams = [
+				{'status':1},
+				{$and:[{'status':0},{'owners':user.toString()}]},
+				{$and:[{'status':0},{'managers':user.toString()}]},
+				{$and:[{'status':0},{'developers':user.toString()}]}
+			];
+		}
 		Project.count()
 			.or(orParams)
 			.lean()
@@ -60,7 +64,7 @@ module.exports = function(page = 1, limit = config.LIMIT, user, application = fa
 {
 	return new Promise(function(resolve,reject)
 	{
-		if(!(user || !admin))
+		if(!(user || admin))
 		{
 			reject('USER_REQUIRED');
 			return;

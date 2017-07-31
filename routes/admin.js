@@ -11,7 +11,8 @@ const express = require('express'),
 	User = require(`../${config.db.path}/user`), //User Database Schema
 	Application = require(`../${config.db.path}/application`);
 
-let projectsRoute = require('./admin/projects'),
+let projectRoute = require('./admin/project'),
+	projectsRoute = require('./admin/projects'),
 	applicationRoute = require('./admin/application'),
 	singleUserRoute = require('./admin/singleUser')
 	userRoute = require('./admin/user');
@@ -25,6 +26,7 @@ router.use(function(req,res,next)
 router.use('/user',singleUserRoute);
 router.use('/users',userRoute);
 router.use('/application',applicationRoute);
+router.use('/project',projectRoute);
 router.use('/projects',projectsRoute);
 
 router.get('/',function(req, res)

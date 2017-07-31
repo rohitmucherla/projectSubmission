@@ -24,7 +24,28 @@ let config =
 	functions: require('./bin/functions'),
 	LIMIT: 10,
 	slack: 'aggie-coding-club',
-	email: 'project-submission@projects.hexr.org'
+	email:
+	{
+		address:'project-submission@projects.hexr.org',
+		namedAddress: '"Project Submission" <project-submission@projects.hexr.org>',
+		replyTo: '"Project Support" <support@projects.hexr.org>',
+		default:
+		{
+			subject: 'Message from Project Submission',
+			body: '<strong><center>This is a test email from Project Submission!</center></strong>'
+		}
+		transport:
+		{
+			host: 'smtp.example.com',
+			port: 465,
+			secure: true,
+			auth:
+			{
+				user: 'user@example.com',
+				pass: 'password'
+			}
+		}
+	},
 }
 
 module.exports = config

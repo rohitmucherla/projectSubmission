@@ -29,10 +29,12 @@
     "mongoose": "^4.11.4",
     "mongoose-type-url": "^1.0.2",
     "morgan": "^1.8.2",
+    "nodemailer": "^4.0.1",
     "passport": "^0.3.2",
     "passport-google-oauth": "^1.0.0",
     "serve-favicon": "^2.4.3",
     "speakingurl": "^13.0.0",
+    "striptags": "^3.0.1",
     "tracer": "^0.8.9"
   },
   "devDependencies": {

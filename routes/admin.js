@@ -5,7 +5,9 @@
 const express = require('express'),
 	console = require('tracer').colorConsole(),
 	router = express.Router(),
+	mailer = require('../bin/mailer'),
 	config = require('../config'), //Global Configuration
+	util = require('util'),
 	User = require(`../${config.db.path}/user`), //User Database Schema
 	Application = require(`../${config.db.path}/application`);
 
@@ -56,6 +58,27 @@ router.get('/',function(req, res)
 			}).catch((e)=>{res.status(500).render('error',{error:e})});
 		}).catch((e)=>{res.status(500).render('error',{error:e})});
 	}).catch((e)=>{res.status(500).render('error',{error:e})});
+});
+
+router.get('/send-test-email',function(req,res)
+{
+	mailer(req.user.email,config.email.default.subject,'<strong><center>Test email 1 from Project Submission!</center></strong>').then(function(info)
+	{
+		res.locals.content = `<h1 class='center'>First Email - <a class='green-text'>Success</a>!</h1><p class='flow-text center'>Details:</p><pre>${util.inspect(info)}</pre><br/>`;
+		mailer({to:req.user.email,body:'<strong><center>Test email 2 from Project Submission!</center></strong>'}).then(function(moreInfo)
+		{
+			res.locals.content += `<h1 class='center'>Second Email - <a class='green-text'>Success</a>!</h1><p class='flow-text center'>Details:</p><pre>${util.inspect(moreInfo)}</pre>`;
+			res.render('card');
+		}).catch(function(error)
+		{
+			res.locals.content += `<h1 class='center'>Second Email - <a class='red-text'>Error</a></h1>: <pre>${error}</pre>`;
+			res.render('card');
+		})
+	}).catch(function(error)
+	{
+		res.locals.content = `<h1 class='center'>First Email - <a class='red-text'>Error</a></h1>: <pre>${error}</pre>`;
+		res.render('card');
+	});
 });
 
 router.get('/projects',function(req,res)

@@ -31,7 +31,8 @@ header.global a:hover {background:rgba(33,33,33,0.2);}
 }
 .profile-edit:hover {background:rgba(25,25,25,0.2);}
 .profile-main {margin-top:10vh;}
-.profile-main .card, .card.nolimit {
+.profile-main .card, .card.nolimit
+{
 	height:auto !important; /*Override card default*/
 	display:grid;
 }

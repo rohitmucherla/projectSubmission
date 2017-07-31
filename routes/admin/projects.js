@@ -5,7 +5,7 @@ const express = require('express'),
 
 router.get('/',function(req, res)
 {
-	loop(1,config.LIMIT).then(function(projectData)
+	loop(1,config.LIMIT,null,false,true).then(function(projectData)
 	{
 		for(key in projectData)
 		{
@@ -33,7 +33,7 @@ router.get('/:offset',function(req,res)
 		return;
 	}
 
-	loop(1,config.LIMIT).then(function(projectData)
+	loop(1,config.LIMIT,null,false,true).then(function(projectData)
 	{
 		for(key in projectData)
 		{

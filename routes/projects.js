@@ -1,5 +1,6 @@
 const express = require('express'),
 	console = require('tracer').colorConsole(),
+	loop = require('../bin/project-loop')
 	router = express.Router(),
 	config = require('../config');
 
@@ -10,7 +11,7 @@ router.use(config.functions.requireLogin);
 
 router.get('/',function(req, res)
 {
-	loop(1,config.LIMIT,req.user.gid).then(function(projectData)
+	loop(1,config.LIMIT,req.user._id,true,false).then(function(projectData)
 	{
 		for(key in projectData)
 		{
@@ -40,7 +41,7 @@ router.get('/:offset',function(req,res)
 		return;
 	}
 
-	loop(req.params.offset,config.LIMIT,req.user.gid).then(function(projectData)
+	loop(req.params.offset,config.LIMIT,req.user._id,true,false).then(function(projectData)
 	{
 		for(key in projectData)
 		{

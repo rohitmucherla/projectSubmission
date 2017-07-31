@@ -3,21 +3,29 @@ const config = require('../config'),
 let Application = require(`../${config.db.path}/application`),
 	Project = require(`../${config.db.path}/project`);
 
-function queryProject(page = 1,limit = config.LIMIT)
+function queryProject(page = 1,limit = config.LIMIT, user, admin = false)
 {
 	let offset = page -1;
 	return new Promise(function(resolve,reject)
 	{
+		if(!(user || admin))
+		{
+			reject('USER_REQUIRED');
+			return;
+		}
 		//Query: SELECT * FROM `Project` WHERE (status=`1`) OR (status=`0` AND [User in owners OR managers OR developers])
 		//Get the number of projects in the db
 		//note: this is not an expensive calculation
+		orParams = [
+			{'status':1},
+			{$and:[{'status':0},{'owners':user.toString()}]},
+			{$and:[{'status':0},{'managers':user.toString()}]},
+			{$and:[{'status':0},{'developers':user.toString()}]}
+		]
+		if(admin)
+			orParams = [{'status':{$gte:-100}}] //-100 is arbitrary; 0 is probably fine
 		Project.count()
-			.or([
-				{'status':1},
-				{$and:[{'status':0},{'owners':req.user._id.toString()}]},
-				{$and:[{'status':0},{'managers':req.user._id.toString()}]},
-				{$and:[{'status':0},{'developers':req.user._id.toString()}]}
-			])
+			.or(orParams)
 			.lean()
 			.exec()
 			.then(function(number)
@@ -29,23 +37,17 @@ function queryProject(page = 1,limit = config.LIMIT)
 			}
 			else
 			{
-				//Get the first config.LIMIT projects
 				Project.find()
 					.skip(limit * offset)
-					.limit(config.LIMIT)
-					.or([
-						{'status':1},
-						{$and:[{'status':0},{'owners':req.user._id.toString()}]},
-						{$and:[{'status':0},{'managers':req.user._id.toString()}]},
-						{$and:[{'status':0},{'developers':req.user._id.toString()}]}
-					])
+					.limit(limit)
+					.or(orParams)
 					.lean()
 					.exec()
 					.then(function(projects)
 				{
 					//Figure out if we need to paginate, and update pagination info
-					let pagination = (number > LIMIT) ?
-						{needed:true, number: Math.ceil(number / LIMIT), current:offset} :
+					let pagination = (number > limit) ?
+						{needed:true, number: Math.ceil(number / limit), current:offset} :
 						{needed:false};
 					resolve({projects,pagination});
 				}).catch(reject);
@@ -54,15 +56,20 @@ function queryProject(page = 1,limit = config.LIMIT)
 	});
 }
 
-module.exports = function(page = 1, limit = config.LIMIT, user = false)
+module.exports = function(page = 1, limit = config.LIMIT, user, application = false, admin = false)
 {
 	return new Promise(function(resolve,reject)
 	{
-		queryProject(page,limit).then(function(projectData)
+		if(!(user || !admin))
+		{
+			reject('USER_REQUIRED');
+			return;
+		}
+		queryProject(page,limit,user,admin).then(function(projectData)
 		{
 			let projects = projectData.projects,
 				pagination = projectData.pagination;
-			if(user)
+			if(application)
 			{
 				Application.find()
 					.where('user-id').equals(user)

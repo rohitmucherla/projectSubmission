@@ -31,7 +31,7 @@
 				</div>
 				<div class="input-field">
 					<label for="notes">Notes (up to 1000 characters)</label>
-					<textarea name="notes" class="charcount materialize-textarea" data-length="1000"></textarea>
+					<textarea name="notes" class="charcount materialize-textarea" data-length="1000">{{errors.notes.value}}</textarea>
 				</div>
 				<input class="maroon btn" type="submit" value="{{#if edit}}Update{{else}}Send{{/if}} application" />
 			</form>

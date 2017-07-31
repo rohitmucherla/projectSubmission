@@ -79,8 +79,7 @@ router.post('/edit',function(req,res)
 	{
 		if(result.isEmpty())
 		{
-			User.findOne()
-				.where('gid').equals(req.user.gid)
+			User.findById(req.user._id)
 				.exec()
 				.then(function(user)
 			{
@@ -127,14 +126,14 @@ router.post('/edit',function(req,res)
 router.get('/applications',function(req,res)
 {
 	Application.find()
-		.where("user-id").equals(req.user.gid)
+		.where("user-id").equals(req.user._id)
 		.limit(config.LIMIT)
 		.populate('project-id','name')
 		.lean()
 		.exec()
 		.then(function(applications)
 	{
-		if(!applications)
+		if(!applications.length)
 		{
 			res.render('application-404');
 			return;
@@ -150,7 +149,7 @@ router.get('/applications',function(req,res)
 		}
 		res.locals.applications = applications;
 		Application.count()
-			.where('user-id').equals(req.user.gid)
+			.where('user-id').equals(req.user._id)
 			.lean()
 			.exec()
 			.then(function(number)
@@ -158,6 +157,7 @@ router.get('/applications',function(req,res)
 			res.locals.pagination = (number > config.LIMIT) ?
 				{needed:true, number: Math.ceil(number / config.LIMIT), current:1} :
 				{needed:false};
+			res.locals.title = "Your Applications";
 			res.render('profile-application-list')
 		}).catch((error)=>{res.status(500).render('error',{error:error});});
 	}).catch((error)=>{res.status(500).render('error',{error:error});});
@@ -178,7 +178,7 @@ router.get('/application/:id/view',function(req,res)
 		return;
 	}
 	Application.findById(id)
-		.where('user-id').equals(req.user.gid)
+		.where('user-id').equals(req.user._id)
 		.populate('project-id','name')
 		.lean()
 		.exec()
@@ -194,6 +194,7 @@ router.get('/application/:id/view',function(req,res)
 		{
 			res.locals.pagination = {needed:false};
 			res.locals.applications = [application];
+			res.locals.title = `Your application to ${project.name}`;
 			res.render('profile-application-list');
 		}
 		else
@@ -215,7 +216,7 @@ router.get('/application/:id/edit',function(req,res)
 		return;
 	}
 	Application.findById(id)
-		.where('user-id').equals(req.user.gid)
+		.where('user-id').equals(req.user._id)
 		.populate('project-id','name')
 		.lean()
 		.exec()
@@ -259,6 +260,7 @@ router.get('/application/:id/edit',function(req,res)
 		};
 		res.locals.edit = true;
 		res.locals.project = project;
+		res.locals.title = `Edit ${project.name} application`;
 		res.render('project-apply');
 
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
@@ -275,7 +277,7 @@ router.post('/application/:id/edit',function(req,res)
 		return;
 	}
 	Application.findById(id)
-		.where('user-id').equals(req.user.gid)
+		.where('user-id').equals(req.user._id)
 		.populate('project-id','name')
 		.exec()
 		.then(function(application)
@@ -349,6 +351,7 @@ router.get('/projects',function(req,res)
 		{
 			res.locals.projects = projects;
 			res.locals.header = "Your Projects";
+			res.locals.title = "Your Projects";
 			res.render('project-listing');
 		}
 		else
@@ -360,8 +363,7 @@ router.get('/projects',function(req,res)
 
 router.get('/submitted',function(req,res)
 {
-	User.findOne()
-		.where('gid').equals(req.user.gid)
+	User.findById(req.user._id)
 		.populate('owner')
 		.select('name owner')
 		.lean()
@@ -369,6 +371,7 @@ router.get('/submitted',function(req,res)
 		.then(function(user)
 	{
 		res.locals.header = `Your submitted projects`;
+		res.locals.title = `Your submitted projects`;
 		res.locals.projects = user.owner;
 		res.render('project-listing');
 	}).catch((err)=>{res.status(500).render('error',{error:err})});

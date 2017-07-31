@@ -17,6 +17,7 @@ router.get('/',function(req, res)
 		{
 			res.locals[key] = projectData[key];
 		}
+		res.locals.title = "Projects";
 		res.render('project-listing');
 	}).catch((error) =>
 	{
@@ -47,8 +48,9 @@ router.get('/:offset',function(req,res)
 		{
 			res.locals[key] = projectData[key];
 		}
+		res.locals.title = `Page ${req.params.offset} - Projects`;
 		res.render('project-listing');
-	}).catch((error) =>
+	}).catch(function(error)
 	{
 		if(error == 'NO_PROJECTS_FOUND')
 		{

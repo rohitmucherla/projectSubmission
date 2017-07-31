@@ -14,6 +14,7 @@ const express = require('express'),
 let projectRoute = require('./admin/project'),
 	projectsRoute = require('./admin/projects'),
 	applicationRoute = require('./admin/application'),
+	applicationsRoute = require('./admin/applications'),
 	singleUserRoute = require('./admin/singleUser')
 	userRoute = require('./admin/user');
 
@@ -26,6 +27,7 @@ router.use(function(req,res,next)
 router.use('/user',singleUserRoute);
 router.use('/users',userRoute);
 router.use('/application',applicationRoute);
+router.use('/applications',applicationsRoute);
 router.use('/project',projectRoute);
 router.use('/projects',projectsRoute);
 

@@ -134,34 +134,32 @@ router.get('/applications',function(req,res)
 		.exec()
 		.then(function(applications)
 	{
-		if(applications)
+		if(!applications)
 		{
-			if(res.locals.back && (res.locals.back.name == "Your Applications"))
-			{
-				delete req.session.back;
-				delete res.locals.back;
-			}
-			else
-			{
-				req.session.back = {name:"Your Applications",url:"/profile/applications"};
-			}
-			res.locals.applications = applications;
-			Application.count()
-				.where('user-id').equals(req.user.gid)
-				.lean()
-				.exec()
-				.then(function(number)
-			{
-				res.locals.pagination = (number > config.LIMIT) ?
-					{needed:true, number: Math.ceil(number / config.LIMIT), current:1} :
-					{needed:false};
-				res.render('profile-application-list')
-			}).catch((error)=>{res.status(500).render('error',{error:error});});
+			res.render('application-404');
+			return;
+		}
+		if(res.locals.back && (res.locals.back.name == "Your Applications"))
+		{
+			delete req.session.back;
+			delete res.locals.back;
 		}
 		else
 		{
-			res.render('application-404');
+			req.session.back = {name:"Your Applications",url:"/profile/applications"};
 		}
+		res.locals.applications = applications;
+		Application.count()
+			.where('user-id').equals(req.user.gid)
+			.lean()
+			.exec()
+			.then(function(number)
+		{
+			res.locals.pagination = (number > config.LIMIT) ?
+				{needed:true, number: Math.ceil(number / config.LIMIT), current:1} :
+				{needed:false};
+			res.render('profile-application-list')
+		}).catch((error)=>{res.status(500).render('error',{error:error});});
 	}).catch((error)=>{res.status(500).render('error',{error:error});});
 });
 
@@ -173,45 +171,36 @@ router.get('/application/:id',function(req,res)
 router.get('/application/:id/view',function(req,res)
 {
 	let id = config.functions.mongooseId(req.params.id);
+	res.locals.single = true;
 	if(!id)
 	{
-		res.locals.single = true;
 		res.render('application-404');
 		return;
 	}
 	Application.findById(id)
 		.where('user-id').equals(req.user.gid)
+		.populate('project-id','name')
 		.lean()
 		.exec()
 		.then(function(application)
 	{
-		if(application)
+		if(!application)
 		{
-			Project.findById(application['project-id'])
-				.select('name')
-				.lean()
-				.exec()
-				.then(function(project)
-			{
-				if(project)
-				{
-					application.projectName = project.name;
-					res.locals.pagination = {needed:false};
-					res.locals.applications = [application];
-					res.render('profile-application-list');
-				}
-				else
-				{
-					res.locals.errorHeader = "Unexpected Error Occurred";
-					res.locals.errorMessage = `<p class="flow-text">We were able to find your application, but are unable to find the project linked to it. Please <a href="mailto:${config.email.adminEmail}?subject=Trouble%20viewing%20application%20${application._id}" target="_blank">Email us</a> so we can fix it! Be sure to include the application identifier <strong>${application._id}</strong></p>`;
-					res.render('custom-error');
-				}
-			});
+			res.render('application-404');
+			return;
+		}
+		let project = application['project-id'];
+		if(project)
+		{
+			res.locals.pagination = {needed:false};
+			res.locals.applications = [application];
+			res.render('profile-application-list');
 		}
 		else
 		{
-			res.locals.single = true;
-			res.render('application-404');
+			res.locals.errorHeader = "Unexpected Error Occurred";
+			res.locals.errorMessage = `<p class="flow-text">We were able to find your application, but are unable to find the project linked to it. Please <a href="mailto:${config.email.adminEmail}?subject=Trouble%20viewing%20application%20${application._id}" target="_blank">Email us</a> so we can fix it! Be sure to include the application identifier <strong>${application._id}</strong></p>`;
+			res.render('custom-error');
 		}
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
@@ -219,27 +208,132 @@ router.get('/application/:id/view',function(req,res)
 router.get('/application/:id/edit',function(req,res)
 {
 	let id = config.functions.mongooseId(req.params.id);
+	res.locals.single = true;
 	if(!id)
 	{
-		res.locals.single = true;
 		res.render('application-404');
 		return;
 	}
 	Application.findById(id)
-		.where('user-id').in(req.user.gid)
+		.where('user-id').equals(req.user.gid)
+		.populate('project-id','name')
 		.lean()
 		.exec()
 		.then(function(application)
 	{
-		if(application)
+		if(!application)
 		{
-			res.send('ok');
+			res.render('application-404');
+			return;
 		}
-		else
+		if(application.status > 0)
 		{
-			res.locals.single = true;
-			res.render('application-404')
+			res.locals.content = "<h1 class='center'>Can't edit</h1><p class='flow-text center'>You can't edit applications that have been approved</p>";
+			res.render('card');
+			return;
 		}
+		let options = {}, project = application['project-id'];
+		if(!project.name)
+		{
+			res.locals.errorHeader = "Unexpected Error Occurred";
+			res.locals.errorMessage = `<p class="flow-text">We were able to find your application, but are unable to find the project linked to it. Please <a href="mailto:${config.email.adminEmail}?subject=Trouble%20viewing%20application%20${application._id}" target="_blank">Email us</a> so we can fix it! Be sure to include the application identifier <strong>${application._id}</strong></p>`;
+			res.render('custom-error');
+		}
+		if(!!req.query.containsData && req.session.applicationData)
+		{
+			let data = req.session.applicationData
+			options['level-of-interest'] = parseInt(data['level-of-interest']) || undefined;
+			options['availability'] = parseInt(data.availability) || undefined;
+			options['ranking'] = parseInt(data.ranking) || undefined;
+			options['notes'] = data.notes || undefined;
+			delete req.session.applicationData;
+		}
+		res.locals.errors =
+		{
+			DO_NOT_RENDER : true,
+			'level-of-interest':
+			{value:options['level-of-interest'] || application['level-of-interest']},
+			'availability':{value:options['time'] || application['time']},
+			'ranking':{value:options['skills'] || application['skills']},
+			'notes':{value:options['notes'] || application['notes']}
+		};
+		res.locals.edit = true;
+		res.locals.project = project;
+		res.render('project-apply');
+
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
+});
+router.post('/application/:id/edit',function(req,res)
+{
+	let id = config.functions.mongooseId(req.params.id);
+	res.locals.single = true;
+	if(req.session.applicationData)
+		delete req.session.applicationData;
+	if(!id)
+	{
+		res.render('application-404');
+		return;
+	}
+	Application.findById(id)
+		.where('user-id').equals(req.user.gid)
+		.populate('project-id','name')
+		.exec()
+		.then(function(application)
+	{
+		if(!application)
+		{
+			res.render('application-404');
+			return;
+		}
+		if(application.status > 0)
+		{
+			res.locals.content = "<h1 class='center'>Can't edit</h1><p class='flow-text center'>You can't edit applications that have been approved</p>";
+			res.status(403).render('card');
+			return;
+		}
+		let options = {}, project = application['project-id'];
+		if(!project.name)
+		{
+			res.locals.errorHeader = "Unexpected Error Occurred";
+			res.locals.errorMessage = `<p class="flow-text">We were able to find your application, but are unable to find the project linked to it. Please <a href="mailto:${config.email.adminEmail}?subject=Trouble%20viewing%20application%20${application._id}" target="_blank">Email us</a> so we can fix it! Be sure to include the application identifier <strong>${application._id}</strong></p>`;
+			res.status(500).render('custom-error');
+		}
+
+		req.checkBody('level-of-interest','Level of Interest is required')
+			.notEmpty()
+			.isInt()
+			.between(1,10).withMessage('Level of interest is on a scale of 1-10');
+		req.checkBody('availability','availability is required')
+			.notEmpty()
+			.isInt()
+			.between(0,20).withMessage('You must be available between 0 and 20 hours a week');
+		req.checkBody('ranking',"Ranking the frameworks and languages is required")
+			.notEmpty()
+			.isInt()
+			.between(1,100).withMessage('Ranking the frameworks and languages is on a scale of 1-100');
+		req.getValidationResult().then(function(result)
+		{
+			//There are errors
+			if(!result.isEmpty())
+			{
+				res.locals.edit = true;
+				res.locals.project = project.name;
+				res.locals.errors = result.mapped(); //@todo check if submitted data is persistant for the user
+				res.render('project-apply');
+			}
+			else
+			{
+				application["level-of-interest"] = req.sanitize('level-of-interest').toInt();
+				application["skills"] = req.sanitize('ranking').toInt();
+				application["time"] = req.sanitize('availability').toInt();
+				application["notes"] = req.sanitize('notes').escapeAndTrim();
+				application.save().then(function()
+				{
+					res.redirect(`/profile/application/${application._id}`);
+				}).catch((err)=>{res.status(500).render('error',{error:err})});
+			}
+		});
+
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
@@ -254,7 +348,7 @@ router.get('/projects',function(req,res)
 		if(projects)
 		{
 			res.locals.projects = projects;
-			res.locals.headerTitle = "Your Projects";
+			res.locals.header = "Your Projects";
 			res.render('project-listing');
 		}
 		else
@@ -274,7 +368,7 @@ router.get('/submitted',function(req,res)
 		.exec()
 		.then(function(user)
 	{
-		res.locals.headerTitle = `Your submitted projects`;
+		res.locals.header = `Your submitted projects`;
 		res.locals.projects = user.owner;
 		res.render('project-listing');
 	}).catch((err)=>{res.status(500).render('error',{error:err})});

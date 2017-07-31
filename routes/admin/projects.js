@@ -3,6 +3,8 @@ const express = require('express'),
 	loop = require('../../bin/project-loop'),
 	router = express.Router();
 
+	router.use(config.functions.requireAdminLogin);
+
 router.get('/',function(req, res)
 {
 	loop(1,config.LIMIT,null,false,true).then(function(projectData)

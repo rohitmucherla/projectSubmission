@@ -4,6 +4,8 @@ const express = require('express'),
 
 User = require(`../../${config.db.path}/user.js`);
 
+router.use(config.functions.requireAdminLogin);
+
 //List all users
 router.get('/',function(req,res)
 {

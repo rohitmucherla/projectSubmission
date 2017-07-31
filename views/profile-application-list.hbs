@@ -1,9 +1,22 @@
 {{#unless single}}<h1 class="center">{{#if header}}{{header}}{{else}}Your{{/if}} applications</h1>{{/unless}}
 <div class="application-container section">
+	{{#if admin}}
+	<ul class="tabs container center admin-project custom">
+		<li class="tab col s4"><a class="{{#if active.all}}active{{/if}}" href="/admin/applications/">All</a></li>
+		<li class="tab col s4"><a class="{{#if active.approved}}active{{/if}}" href="/admin/applications/approved">Approved</a></li>
+		<li class="tab col s4"><a class="{{#if active.unapproved}}active{{/if}}" href="/admin/applications/unapproved">Unapproved</a></li>
+	</ul>
+	{{/if}}
 	{{#each applications}}
 		<div class="container section application">
 			<div class="card">
 				<div class="card-content">
+					{{#if (renderProjectApproval ../admin this)}}
+					<div class="row">
+						<div class="col s12 m4 center offset-m2"><a href="/admin/application/{{this._id}}/approve" class="btn waves-effect waves-light green">Approve</a></div>
+						<div class="col s12 m4 center"><a href="/admin/application/{{this._id}}/reject" class="btn waves-effect waves-light red">Reject</a></div>
+					</div>
+					{{/if}}
 					<div class="row">
 						<div class="col s12 center m4 push-m8">
 							<a class="flow-text btn red" href="/project/{{this.project-id._id}}">View Project</a>

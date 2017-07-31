@@ -92,7 +92,6 @@ router.post('/edit',function(req,res)
 					user.company  = req.sanitize('company').escapeAndTrim();
 					user.save().then(function(use)
 					{
-						console.log(use);
 						res.redirect('/profile');
 					}).catch((e)=>{res.status(500).render('error',{error:e})});
 				}

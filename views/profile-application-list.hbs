@@ -47,9 +47,11 @@
 							Details: {{this.statusNotes}}
 						{{/if}}
 					</div>
+					{{#unless ../admin}}
 					<div class="row center">
 						<p class="flow-text">See a problem? <a href="/profile/application/{{this._id}}/edit" class="btn">Edit Application</a></p>
 					</div>
+					{{/unless}}
 				</div>
 			</div>
 		</div>

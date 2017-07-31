@@ -1,8 +1,7 @@
 const config = require('../config'),
-	loop = require('../../bin/project-loop'),
 	Promise = require('bluebird');
-let Application = require(`../${db.options.path}/application`),
-	Project = require(`../${db.options.path}/project`);
+let Application = require(`../${config.db.path}/application`),
+	Project = require(`../${config.db.path}/project`);
 
 function queryProject(page = 1,limit = config.LIMIT)
 {

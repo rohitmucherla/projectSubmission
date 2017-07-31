@@ -52,7 +52,7 @@ functions = {
 		else
 		{
 			//Admins have access > 10
-			if(!isAdmin(req.user))
+			if(!functions.isAdmin(req.user))
 				res.render('admin-block');
 			//Move on
 			else

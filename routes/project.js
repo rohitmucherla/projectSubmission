@@ -343,7 +343,7 @@ router.post('/:id-:name/apply',function(req,res)
 					res.status(403).render('card');
 					return;
 				}
-				if(data)
+				if(project)
 				{
 					req.checkBody('level-of-interest','Level of Interest is required')
 						.notEmpty()
@@ -372,7 +372,7 @@ router.post('/:id-:name/apply',function(req,res)
 
 							//Set app data
 							application["project-id"] = req.params.id; //We already know the project exists
-							application["user-id"] = req.user.gid;
+							application["user-id"] = req.user._id;
 							application["level-of-interest"] = req.sanitize('level-of-interest').toInt();
 							application["skills"] = req.sanitize('ranking').toInt();
 							application["time"] = req.sanitize('availability').toInt();

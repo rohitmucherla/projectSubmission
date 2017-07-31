@@ -3,22 +3,20 @@ const config = require('../config'),
 let Application = require(`../${config.db.path}/application`),
 	Project = require(`../${config.db.path}/project`);
 
-function queryProject(page = 1,limit = config.LIMIT, user, admin = false)
+//Not setting defaults because the ONLY function that will call this already does
+function queryProject(page, limit, user, admin, status)
 {
 	let offset = page -1;
 	return new Promise(function(resolve,reject)
 	{
-		if(!(user || admin))
-		{
-			reject('USER_REQUIRED');
-			return;
-		}
 		//Query: SELECT * FROM `Project` WHERE (status=`1`) OR (status=`0` AND [User in owners OR managers OR developers])
 		//Get the number of projects in the db
 		//note: this is not an expensive calculation
 		let orParams;
 		if(admin)
 			orParams = [{'status':{$gte:-100}}] //-100 is arbitrary; 0 is probably fine
+		else if(status != null) //status can be 0
+			orParams = [{'status':status}];
 		else
 		{
 			orParams = [
@@ -60,16 +58,16 @@ function queryProject(page = 1,limit = config.LIMIT, user, admin = false)
 	});
 }
 
-module.exports = function(page = 1, limit = config.LIMIT, user, application = false, admin = false)
+module.exports = function(page = 1, limit = config.LIMIT, user, application = false, admin = false, status = null)
 {
 	return new Promise(function(resolve,reject)
 	{
-		if(!(user || admin))
+		if(!(user || admin || status != null))
 		{
-			reject('USER_REQUIRED');
+			reject('USER_ADMIN_STATUS_REQUIRED');
 			return;
 		}
-		queryProject(page,limit,user,admin).then(function(projectData)
+		queryProject(page,limit,user,admin,status).then(function(projectData)
 		{
 			let projects = projectData.projects,
 				pagination = projectData.pagination;

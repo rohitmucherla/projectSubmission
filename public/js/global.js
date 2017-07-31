@@ -14,3 +14,10 @@ function projectCreateBeforeSubmit()
 	return true;
 }
 $("#project-create").submit(projectCreateBeforeSubmit);
+$(".tabs:not(.custom)").tabs();
+$(".tabs.admin-project").tabs({
+	onShow: function(e)
+	{
+		window.location.href = $(this).attr('href');
+	}
+})

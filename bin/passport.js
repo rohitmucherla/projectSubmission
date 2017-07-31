@@ -80,6 +80,7 @@ module.exports = function(passport) // make modifications to the passport object
 						newUser.name.last = profile.name.familyName;
 						newUser.name.full = profile.displayName;
 						newUser.isPublic = true;
+						newUser.limit = config.limits.unapprovedUnverifiedProjects;
 
 						newUser.pic  = profile.photos[0].value; //Profile picture
 

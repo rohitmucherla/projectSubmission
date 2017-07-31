@@ -17,95 +17,113 @@ router.get('/',function(req, res)
 //User wants to create a project
 router.get('/create',function(req,res)
 {
-	if(req.user.approved)
+	Project.find()
+		.where('owners').in([req.user._id])
+		.where('status').equals(0)
+		.lean()
+		.count()
+		.exec()
+		.then(function(numProjects)
 	{
-		res.locals.title = "Create a project";
-		res.render('project-create',{user:req.user});
-	}
-	else
-	{
-		res.locals.content = "<h1 class='center'>Access Denied</h1><p class='flow-text center'>You cannot create projects until your profile is approved.</p>";
-		res.render('card');
-	}
+		if(req.user.limit < 0 || req.user.limit > numProjects)
+		{
+			res.locals.title = "Create a project";
+			res.render('project-create');
+		}
+		else
+		{
+			res.locals.content = `<h1 class='center'>Access Denied</h1><p class='flow-text center'>You've exceeded the maximum number of projects you can create. If you want to increase this limit, please <a href='mailto:${config.email.adminEmail}?subject=Increase%20project%20submission%20limit'>email us</a> with an explanation of why you believe your limit should be increased. You can also delete (or edit) some projects</p>`;
+			res.render('card');
+		}
+	}).catch((err)=>{res.status(500).render('error',{error:err})})
 })
 
 //User has submitted form with project details
 router.post('/create',function(req,res)
 {
-	if(!req.user.approved)
+	Project.find()
+		.where('owners').in([req.user._id])
+		.where('status').equals(0)
+		.lean()
+		.count()
+		.exec()
+		.then(function(numProjects)
 	{
-		res.status(403).render('admin-block');
-		return;
-	}
-	//Validate name
-	req.checkBody('name','Name is required')
-		.notEmpty()
-		.len(2,30).withMessage('Project name must be between 2 and 30 characters');
-	//Validate abstract
-	req.checkBody('abstract','Abstract is required')
-		.notEmpty()
-		.len(100,1000).withMessage('Abstract must be between 100 and 1000 characters');
-	//Validate description
-	req.checkBody('description','Description is required')
-		.notEmpty()
-		.len(100,100000000).withMessage('Your description is too short');
-	//Validate number of people
-	req.checkBody('number-of-people','Number of people is required')
-		.notEmpty()
-		.isInt()
-		.between(1,10).withMessage('Number of people must be between 0 and 10');
-
-	req.getValidationResult().then(function(result)
-	{
-		//There are errors
-		if(!result.isEmpty())
+		if(req.user.limit < 0 || req.user.limit > numProjects)
 		{
-			res.render('project-create',
-			{
-				errors:result.mapped(),
-				langs:req.body.langs //@todo: Update chips in project-create w/ langs value
-			});
+			res.status(403).render('admin-block');
 		}
 		else
 		{
-			langs = req.sanitize('langs').escapeAndTrim().split(',');
-			//Create new project
-			let project = new Project();
+			//Validate name
+			req.checkBody('name','Name is required')
+				.notEmpty()
+				.len(2,30).withMessage('Project name must be between 2 and 30 characters');
+			//Validate abstract
+			req.checkBody('abstract','Abstract is required')
+				.notEmpty()
+				.len(100,1000).withMessage('Abstract must be between 100 and 1000 characters');
+			//Validate description
+			req.checkBody('description','Description is required')
+				.notEmpty()
+				.len(100,100000000).withMessage('Your description is too short');
+			//Validate number of people
+			req.checkBody('number-of-people','Number of people is required')
+				.notEmpty()
+				.isInt()
+				.between(1,10).withMessage('Number of people must be between 0 and 10');
 
-			//Set project data
-			project.name = req.sanitize('name').escapeAndTrim();
-			project.description = req.sanitize('description').escapeAndTrim();
-			project.abstract = req.sanitize('abstract').escapeAndTrim();
-			project.owners = [config.functions.mongooseId(req.user._id)]; //As array
-			project.created = Date.now() + 15; //Add 15ms for execution time
-			project.languages =  (langs == "") ? [] : langs;
-			project.status = 0; //Unapproved
-			project.paid = req.body.paid == "on" ? 1 : 0;
-			project.numberOfPeople = req.sanitize('number-of-people').toInt();
-			project.save().then(function()
+			req.getValidationResult().then(function(result)
 			{
-				User.findOne()
-					.where('gid').equals(req.user.gid)
-					.exec()
-					.then(function(user)
+				//There are errors
+				if(!result.isEmpty())
 				{
-					if(user)
+					res.locals.errors = result.mapped();
+					res.locals.langs = req.body.langs;//@todo: Update chips in project-create w/ langs value
+					res.render('project-create');
+				}
+				else
+				{
+					langs = req.sanitize('langs').escapeAndTrim().split(',');
+					//Create new project
+					let project = new Project();
+
+					//Set project data
+					project.name = req.sanitize('name').escapeAndTrim();
+					project.description = req.sanitize('description').escapeAndTrim();
+					project.abstract = req.sanitize('abstract').escapeAndTrim();
+					project.owners = [config.functions.mongooseId(req.user._id)]; //As array
+					project.created = Date.now() + 15; //Add 15ms for execution time
+					project.languages =  (langs == "") ? [] : langs;
+					project.status = 0; //Unapproved
+					project.paid = req.body.paid == "on" ? 1 : 0;
+					project.numberOfPeople = req.sanitize('number-of-people').toInt();
+					project.save().then(function()
 					{
-						user.owner.push(config.functions.mongooseId(project._id));
-						user.save().then(function()
+						User.findOne()
+							.where('gid').equals(req.user.gid)
+							.exec()
+							.then(function(user)
 						{
-								res.redirect(`/project/${project.id}`);
-						}).catch((err)=>{res.status(500).render('error',{error:err})})
-					}
-					else
-					{
-						console.error('***CRITICAL ERROR***:','Nonexistant user created a project! User:',req.user,'Project:',project);
-						res.status(500).render('admin-block');
-					}
-				})
-			}).catch((err)=>{res.status(500).render('error',{error:err})})
+							if(user)
+							{
+								user.owner.push(config.functions.mongooseId(project._id));
+								user.save().then(function()
+								{
+										res.redirect(`/project/${project.id}`);
+								}).catch((err)=>{res.status(500).render('error',{error:err})})
+							}
+							else
+							{
+								console.error('***CRITICAL ERROR***:','Nonexistant user created a project! User:',req.user,'Project:',project);
+								res.status(500).render('admin-block');
+							}
+						})
+					}).catch((err)=>{res.status(500).render('error',{error:err})})
+				}
+			});
 		}
-	});
+	}).catch((err)=>{res.status(500).render('error',{error:err})})
 });
 
 router.get('/:id',function(req,res)

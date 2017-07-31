@@ -23,6 +23,11 @@ let config =
 	port: 4539,
 	functions: require('./bin/functions'),
 	LIMIT: 10,
+	limits:
+	{
+		unverifiedProjects: 5,
+		unapprovedUnverifiedProjects:0
+	},
 	slack: 'aggie-coding-club',
 	email:
 	{

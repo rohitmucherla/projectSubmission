@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 require('mongoose-type-url');
+let config = require('../config');
 mongoose.Promise = require('bluebird');
 
 let userSchema = mongoose.Schema(
@@ -65,7 +66,13 @@ let userSchema = mongoose.Schema(
 	],
 	approved: {type:Boolean,required:true,default:false},
 	profileComplete:{required:true,type:Boolean,default:false},
-	pic:{required:true,type:String}
+	pic:{required:true,type:String},
+	limit:
+	{
+		type:Number,
+		min: -1,
+		default: config.limits.unapprovedUnverifiedProjects
+	}
 });
 
 module.exports = mongoose.model('User',userSchema);

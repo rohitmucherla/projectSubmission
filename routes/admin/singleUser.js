@@ -2,10 +2,11 @@ const express = require('express'),
 	router = express.Router(),
 	config = require('../../config');
 
+
 User = require(`../../${config.db.path}/user.js`);
 Project = require(`../../${config.db.path}/project.js`);
 
-router.use(config.functions.requireLogin);
+router.use(config.functions.requireAdminLogin);
 
 //Display the profile of user `id`; the `:` denotes a variable (stored in req.params)
 router.get('/:id',function(req,res)
@@ -20,7 +21,7 @@ router.get('/:id',function(req,res)
 		.exec()
 		.then(function(user)
 	{
-		res.locals.user = user;
+		res.locals.userData = user;
 		res.render('admin-user-single');
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
@@ -59,15 +60,32 @@ router.get('/:id/approve',function(req,res)
 //Delete user `id`
 router.get('/:id/delete',function(req,res)
 {
-	//@todo implement
-	res.send('Nothing happened');
+	let location = config.functions.mongooseId(req.params.id) ? '_id' : 'gid',
+		query = {[location]:req.params.id};
+	User.findOne(query)
+		.lean()
+		.select('name')
+		.exec()
+		.then(function(user)
+		{
+			if(user)
+			{
+				res.locals.userData = user;
+				res.render('user-delete');
+			}
+			else
+			{
+				res.render('user-404');
+			}
+		}).catch((e)=>{res.status(500).render('error',{error:e})});
 });
 
 router.post('/:id/delete',function(req,res)
 {
+	let location = config.functions.mongooseId(req.params.id) ? '_id' : 'gid',
+		query = {[location]:req.params.id}
 	//@todo add csrf token
-	User.findOne()
-		.where('gid').equals(req.params.id)
+	User.findOne(query)
 		.remove()
 		.exec()
 		.then(function(b)

@@ -1,36 +1,40 @@
 {{#if errors}}
+	{{#unless errors.DO_NOT_RENDER}}
 	<div class="error-message center red-text container">
 		Your submission had 1 or more errors:<br/>
 		{{#each errors}}
 			<span class="error left"> - {{this.msg}}</span><br/>
 		{{/each}}
 	</div>
+	{{/unless}}
 {{/if}}
-{{json errors}}
 <div class="container row section">
-	<h1 class="center">Apply for {{project.name}}</h1>
-	<br/>
-	<form method="post" class="col s12" id="project-apply">
-		<div class="row">
-			<div class="range-field col s12 m9">
-				<label for="level-of-interest" class="flow-text">Level of Interest (1-10)<span class="required red-text"> *</span></label>
-				<input required type="range" name="level-of-interest" autocomplete="off" placeholder="" value="{{errors.level-of-interest.value}}" min="0" max="10"/>
-			</div>
-			<div class="col s12 m3 input-field">
-				<input required type="number" min="1" max="20" name="availability" class="validate" value="{{errors.availability.value}}"/>
-				<label for="availability">Hours per week (avg) <span class="required red-text">*</span></label>
-			</div>
+	<div class='card nolimit'>
+		<div class='card-content'>
+			<h1 class="center section">{{#if edit}}Update application {{else}}Apply{{/if}} for {{project.name}}</h1>
+			<form method="post" class="col s12" id="project-apply">
+				<div class="row">
+					<div class="range-field col s12 m9">
+						<label for="level-of-interest" class="flow-text">Level of Interest (1-10)<span class="required red-text"> *</span></label>
+						<input required type="range" name="level-of-interest" autocomplete="off" placeholder="" value="{{errors.level-of-interest.value}}" min="0" max="10"/>
+					</div>
+					<div class="col s12 m3 input-field">
+						<input required type="number" min="1" max="20" name="availability" class="validate" value="{{errors.availability.value}}"/>
+						<label for="availability">Hours per week (avg) <span class="required red-text">*</span></label>
+					</div>
+				</div>
+				<div class="row">
+					<div class="range-field col s12">
+						<label for="ranking" class="flow-text">How well do you know the languages and frameworks this project requires (1-100)?<span class="required red-text"> *</span></label>
+						<input required type="range" name="ranking" autocomplete="off" placeholder="" value="{{errors.ranking.value}}" min="0" max="100"/>
+					</div>
+				</div>
+				<div class="input-field">
+					<label for="notes">Notes (up to 1000 characters)</label>
+					<textarea name="notes" class="charcount materialize-textarea" data-length="1000"></textarea>
+				</div>
+				<input class="maroon btn" type="submit" value="{{#if edit}}Update{{else}}Send{{/if}} application" />
+			</form>
 		</div>
-		<div class="row">
-			<div class="range-field col s12">
-				<label for="ranking" class="flow-text">How well do you know the languages and frameworks this project requires (1-100)?<span class="required red-text"> *</span></label>
-				<input required type="range" name="ranking" autocomplete="off" placeholder="" value="{{errors.ranking.value}}" min="0" max="100"/>
-			</div>
-		</div>
-		<div class="input-field">
-			<label for="notes">Notes (up to 1000 characters)</label>
-			<textarea name="notes" class="charcount materialize-textarea" data-length="1000"></textarea>
-		</div>
-		<input class="maroon btn" type="submit" value="Send application" />
-	</form>
+	</div>
 </div>

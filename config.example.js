@@ -31,9 +31,10 @@ let config =
 	slack: 'aggie-coding-club',
 	email:
 	{
-		address:'project-submission@projects.hexr.org',
-		namedAddress: '"Project Submission" <project-submission@projects.hexr.org>',
-		replyTo: '"Project Support" <support@projects.hexr.org>',
+		adminEmail: 'support@projects.hexr.org', //email that's listed throughout the site
+		replyTo: '"Project Support" <support@projects.hexr.org>', //pretty adminEmail
+		address:'project-submission@projects.hexr.org', //from
+		namedAddress: '"Project Submission" <project-submission@projects.hexr.org>', //pretty from
 		default:
 		{
 			subject: 'Message from Project Submission',

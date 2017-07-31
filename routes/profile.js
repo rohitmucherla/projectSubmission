@@ -203,7 +203,7 @@ router.get('/application/:id/view',function(req,res)
 				else
 				{
 					res.locals.errorHeader = "Unexpected Error Occurred";
-					res.locals.errorMessage = `<p class="flow-text">We were able to find your application, but are unable to find the project linked to it. Please <a href="mailto:${config.email}?subject=Trouble%20viewing%20application%20${application._id}" target="_blank">Email us</a> so we can fix it! Be sure to include the application identifier <strong>${application._id}</strong></p>`;
+					res.locals.errorMessage = `<p class="flow-text">We were able to find your application, but are unable to find the project linked to it. Please <a href="mailto:${config.email.adminEmail}?subject=Trouble%20viewing%20application%20${application._id}" target="_blank">Email us</a> so we can fix it! Be sure to include the application identifier <strong>${application._id}</strong></p>`;
 					res.render('custom-error');
 				}
 			});

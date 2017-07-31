@@ -2,8 +2,8 @@
 	<div class="card">
 		<div class="card-title">
 			<h1 class="center">
-				<img src="{{user.pic}}" alt="{{user.name}}'s profile pic" class="circle" />
-				{{user.name}}
+				<img src="{{user.pic}}" alt="{{user.name.full}}'s profile pic" class="circle" />
+				{{user.name.full}}
 			</h1>
 		</div>
 		<div class="card-content">
@@ -23,11 +23,43 @@
 			</div>
 			<div class="section" id="projects">
 				<h2>Projects</h2>
-				{{#each user.projects}}
-					{{user.projects}}
-				{{else}}
-					No projects
-				{{/each}}
+				<div class="row">
+					<div class="col s12">
+						<ul class="tabs tabs-fixed-width">
+							<li class="tab col s4"><a href="#owns">Owns [{{#if user.owner}} {{user.owner.length}}{{else}}0{{/if}}]</a></li>
+							<li class="tab col s3"><a href="#manages">Manages [{{#if user.manager}} {{user.manager.length}}{{else}}0{{/if}}]</a></li>
+							<li class="tab col s4"><a href="#develops">Works On [{{#if user.developer}} {{user.developer.length}}{{else}}0{{/if}}]</a></li>
+						</ul>
+					</div>
+
+				 	<div id="owns" class="col s12">
+				 		<div class="section container center">
+							{{#each user.owner}}
+								<p class='flow-text'><a href="/project/{{this._id}}">{{this.name}}</a></p>
+							{{else}}
+								<p class='flow-text'>[none]</p>
+							{{/each}}
+				 		</div>
+					</div>
+					<div id="manages" class="col s12">
+						<div class="section container center">
+							{{#each user.manager}}
+								<p class='flow-text'><a href="/project/{{this._id}}">{{this.name}}</a></p>
+							{{else}}
+								<p class='flow-text'>[none]</p>
+							{{/each}}
+						</div>
+					</div>
+					<div id="develops" class="col s12">
+						<div class="section container center">
+							{{#each user.developer}}
+								<p class='flow-text'><a href="/project/{{this._id}}">{{this.name}}</a></p>
+							{{else}}
+								<p class='flow-text'>[none]</p>
+							{{/each}}
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

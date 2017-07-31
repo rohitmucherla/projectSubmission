@@ -26,6 +26,8 @@ header.global a:hover {background:rgba(33,33,33,0.2);}
 	height:34px;
 	width: 34px;
 	background:rgba(25,25,25,0.1);
+	position:absolute;
+	right:20px;
 }
 .profile-edit:hover {background:rgba(25,25,25,0.2);}
 .profile-main {margin-top:10vh;}

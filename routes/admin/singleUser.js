@@ -95,7 +95,7 @@ router.get('/:id/applications',function(req,res)
 			.exec()
 			.then(function(applications)
 		{
-			if(!applications)
+			if(!applications.length)
 			{
 				res.render('application-404');
 				return;

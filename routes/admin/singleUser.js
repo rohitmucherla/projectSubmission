@@ -10,27 +10,19 @@ router.use(config.functions.requireLogin);
 //Display the profile of user `id`; the `:` denotes a variable (stored in req.params)
 router.get('/:id',function(req,res)
 {
-	User.findOne()
+	let location = config.functions.mongooseId(req.params.id) ? '_id' : 'gid',
+		query = {[location]:req.params.id}
+	User.findOne(query)
+		.populate('owner')
+		.populate('manager')
+		.populate('developer')
 		.lean()
-		.where('gid').in(req.params.id)
 		.exec()
 		.then(function(user)
 	{
-		res.render('admin-user-single',{user:user});
+		res.locals.user = user;
+		res.render('admin-user-single');
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
-});
-
-//Display projects of user `id`
-router.get('/:id/projects',function(req,res)
-{
-	Project.find()
-		.where('owners').in([req.params.id])
-		.lean()
-		.exec()
-		.then(function(results)
-	{
-		res.send('Query executed. Check back later');
-	}).catch((error)=>{res.render('error',{error:error})});
 });
 
 //Approve user `id`
@@ -42,26 +34,24 @@ router.get('/:id/approve',function(req,res)
 		.exec()
 		.then(function(user)
 	{
-		if(user)
+		if(!user)
 		{
-			if(user.approved)
-			{
-				req.flash('error',`${user.name} is already approved!`)
-				res.render('index');
-			}
-			else
-			{
-				user.approved = true;
-				user.save().then(function()
-				{
-					req.flash('success',`User ${user.name} approved!`);
-					res.render('index');
-				})
-			}
+			res.render("error",{error:{status:404,message:"User not found."}})
+			return;
+		}
+		if(user.approved)
+		{
+			req.flash('error',`${user.name} is already approved!`)
+			res.render('index');
 		}
 		else
 		{
-			res.render("error",{error:{status:404,message:"User not found."}})
+			user.approved = true;
+			user.save().then(function()
+			{
+				req.flash('success',`User ${user.name} approved!`);
+				res.render('index');
+			}).catch((error)=>{res.status(500).render('error',{error:error})});
 		}
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
@@ -69,6 +59,13 @@ router.get('/:id/approve',function(req,res)
 //Delete user `id`
 router.get('/:id/delete',function(req,res)
 {
+	//@todo implement
+	res.send('Nothing happened');
+});
+
+router.post('/:id/delete',function(req,res)
+{
+	//@todo add csrf token
 	User.findOne()
 		.where('gid').equals(req.params.id)
 		.remove()
@@ -79,25 +76,36 @@ router.get('/:id/delete',function(req,res)
 		req.flash('success','Deleted User');
 		res.render('index');
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
-});
+})
 
 router.get('/:id/applications',function(req,res)
 {
-	Application.find()
+	let location = config.functions.mongooseId(req.params.id) ? '_id' : 'gid',
+		query = {[location]:req.params.id}
+	User.findOne(query)
+		.select('name')
 		.lean()
-		.where("user-id").equals(req.user.gid)
 		.exec()
-		.then(function(applications)
+		.then(function(user)
+	{
+		Application.find()
+			.lean()
+			.where("user-id").equals(user._id)
+			.populate('project-id','name')
+			.exec()
+			.then(function(applications)
 		{
+			if(!applications)
+			{
+				res.render('application-404');
+				return;
+			}
 			//@todo: add pagination
 			res.locals.applications = applications;
-			User.findOne().where('gid').equals(req.params.id).select('name').exec(function(name)
-			{
-				res.locals.header = name + '\'s';
-				res.render('profile-application-list');
-			});
-		})
-		.catch((error)=>{res.status(500).render('error',{error:error})});
+			res.locals.header = user.name.full + "'s";
+			res.render('profile-application-list');
+		}).catch((error)=>{res.status(500).render('error',{error:error})});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 })
 
 module.exports = router;

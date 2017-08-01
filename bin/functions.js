@@ -119,7 +119,7 @@ functions = {
 		});
 		//@endtodo
 		userAccess = allowed.includes(user._id.toString());
-		return userAccess || (project.status == 0 && functions.isAdmin(user));// || user.access >= 10;
+		return project.status == 1 ||  userAccess || (project.status == 0 && functions.isAdmin(user));// || user.access >= 10;
 	}
 }
 module.exports = functions;

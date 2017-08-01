@@ -24,12 +24,13 @@ router.get('/edit',function(req,res)
 
 router.post('/edit',function(req,res)
 {
-	let params = ['headline','github','slack','website','company'],
+	let params = ['headline','github','slack','website','company','isPublic'],
 		broken = false;
 	params.forEach(function(param)
 	{
-		if(!req.body[param])
+		if(req.body[param] == undefined)
 		{
+			console.log('error with',param);
 			broken = true;
 			res.redirect('/profile/edit');
 			return;
@@ -85,11 +86,15 @@ router.post('/edit',function(req,res)
 			{
 				if(user)
 				{
-					user.headline = req.sanitize('headline').escapeAndTrim();
-					user.github   = req.sanitize('github').escapeAndTrim();
-					user.slack    = req.sanitize('slack').escapeAndTrim();
-					user.website  = req.sanitize('website').trim(); //@todo hack this
-					user.company  = req.sanitize('company').escapeAndTrim();
+					let website = req.sanitize('website').trim();
+					user.headline = req.sanitize('headline').escapeAndTrim() || null;
+					user.github   = req.sanitize('github').escapeAndTrim() || null;
+					user.slack    = req.sanitize('slack').escapeAndTrim() || null;
+					if(website)
+						user.website  = website; //@todo: hack this
+					user.company  = req.sanitize('company').escapeAndTrim() || null;
+					user.isPublic = req.body.isPublic == '-1' ? false : true; //default to public
+
 					user.save().then(function(use)
 					{
 						res.redirect('/profile');
@@ -346,7 +351,7 @@ router.get('/projects',function(req,res)
 		.exec()
 		.then(function(projects)
 	{
-		if(projects)
+		if(projects.length)
 		{
 			res.locals.projects = projects;
 			res.locals.header = "Your Projects";
@@ -406,6 +411,58 @@ router.get('/:id/projects/submitted',function(req,res)
 				res.render('profile');
 			}
 		}).catch((e)=>{res.status(500).render('error',{error:e})});
+});
+
+router.get('/:id/projects/assigned',function(req,res)
+{
+	if(req.params.id == req.user.gid)
+	{
+		res.redirect('/profie/projects/assigned');
+		return;
+	}
+	User.findOne()
+		.where('gid').equals(req.params.id)
+		.select('isPublic name')
+		.lean()
+		.exec()
+		.then(function(user)
+	{
+		if(!user || !user.isPublic)
+		{
+			res.locals.userData = {gid:-1,isPublic:false};
+			res.render('profile');
+		}
+		else
+		{
+			Application.find()
+				.where('user-id').equals(user._id)
+				.populate('project-id')
+				.lean()
+				.exec()
+				.then(function(applications)
+			{
+				let projects = [];
+				applications.forEach(function(application)
+				{
+					if(application['project-id'].status > 0 && application['project-id'].status < 2)
+					{
+						projects.push(application['project-id']);
+					}
+				});
+				if(projects.length)
+				{
+					res.locals.projects = projects;
+					res.locals.title = `${user.name.first}'s Projects`
+					res.locals.header = `${user.name.first}'s Projects`
+					res.render('project-listing');
+				}
+				else
+				{
+					res.render('project-404');
+				}
+			})
+		}
+	})
 });
 
 router.get('/:id',function(req,res)

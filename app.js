@@ -91,6 +91,15 @@ hbs.registerHelper('canRenderUser',function(user,currentUser)
 	return (user.gid == currentUser.gid) || user.isPublic;
 });
 
+hbs.registerHelper('profile-checkbox',function(error,user)
+{
+	compare = true;
+	if(error != undefined)
+		compare &= error;
+	else compare &= user.isPublic
+	return compare ? 'checked' : '';
+})
+
 /*
 * Load Routes
 */

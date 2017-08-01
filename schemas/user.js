@@ -39,7 +39,6 @@ let userSchema = mongoose.Schema(
 	website:
 	{
 		type: mongoose.SchemaTypes.Url,
-		default: undefined
 	},
 	headline:
 	{

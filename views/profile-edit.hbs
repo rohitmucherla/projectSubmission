@@ -51,6 +51,12 @@
 							<label for="company">Company</label>
 						</div>
 					</div>
+					<div class="row section">
+						<div class="input-field col s12 m12 center">
+							<input type="checkbox" name="isPublic" id="isPublic" {{profile-checkbox errors.isPublic.value user}} />
+							<label for="isPublic">Make my profile public for logged in users</label>
+						</div>
+					</div>
 					<input type="submit" class="center btn" value="Save changes" />
 				</form>
 			</div>

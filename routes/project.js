@@ -131,25 +131,25 @@ router.get('/:id',function(req,res)
 	res.locals.single = true;
 	if(!id)
 	{
-		res.render('project-404');
+		res.locals.projects = [];
+		res.render('project-listing');
+		return
 	}
-	else
+	Project.findById(id)
+		.lean()
+		.exec()
+		.then(function(project)
 	{
-		Project.findById(id)
-			.lean()
-			.exec()
-			.then(function(project)
+		if(project)
 		{
-			if(project)
-			{
-				res.redirect(`/project/${req.params.id}-${getSlug(project.name)}/view`);
-			}
-			else
-			{
-				res.render('project-404');
-			}
-		}).catch((error)=>{res.status(500).render('error',{error:error})});
-	}
+			res.redirect(`/project/${req.params.id}-${getSlug(project.name)}/view`);
+		}
+		else
+		{
+			res.locals.projects = [];
+			res.render('project-listing');
+		}
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
 router.get('/:id-:name/view',function(req,res)
@@ -158,7 +158,8 @@ router.get('/:id-:name/view',function(req,res)
 	res.locals.single = true;
 	if(!id)
 	{
-		res.render('project-404');
+		res.locals.projects = [];
+		res.render('project-listing');
 		return;
 	}
 	Project.findById(id)
@@ -168,7 +169,8 @@ router.get('/:id-:name/view',function(req,res)
 	{
 		if(!project)
 		{
-			res.render('project-404');
+			res.locals.projects = [];
+			res.render('project-listing');
 			return;
 		}
 		if(!config.functions.canRenderProject(project,req.user))
@@ -212,8 +214,8 @@ router.get('/:id/view',function(req,res)
 	let id = config.functions.mongooseId(req.params.id);
 	if(!id)
 	{
-		res.locals.single = true;
-		res.render('project-404');
+		res.locals.projects = [];
+		res.render('project-listing');
 		return;
 	}
 	Project.findById(id)
@@ -225,8 +227,8 @@ router.get('/:id/view',function(req,res)
 			res.redirect(`/project/${req.params.id}-${getSlug(project.name)}/view`);
 		else
 		{
-			res.locals.sinlge = true;
-			res.render('project-404');
+			res.locals.projects = [];
+			res.render('project-listing');
 		}
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
@@ -236,8 +238,8 @@ router.get('/:id-:name/apply',function(req,res)
 	let id = config.functions.mongooseId(req.params.id);
 	if(!id)
 	{
-		res.locals.single = true;
-		res.render('project-404');
+		res.locals.projects = [];
+		res.render('project-listing');
 		return;
 	}
 	Application.findOne()
@@ -271,8 +273,8 @@ router.get('/:id-:name/apply',function(req,res)
 				}
 				else
 				{
-					res.locals.single = true;
-					res.render('project-404');
+					res.locals.projects = [];
+					res.render('project-listing');
 				}
 			});
 		}
@@ -284,8 +286,8 @@ router.get('/:id/apply',function(req,res)
 	id = config.functions.mongooseId(req.params.id);
 	if(!id)
 	{
-		res.locals.single = true;
-		res.render('project-404');
+		res.locals.projects = [];
+		res.render('project-listing');
 		return;
 	}
 	Project.findById(id)
@@ -299,8 +301,8 @@ router.get('/:id/apply',function(req,res)
 		}
 		else
 		{
-			res.locals.single = true;
-			res.render('project-404');
+			res.locals.projects = [];
+			res.render('project-listing');
 		}
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
@@ -310,8 +312,8 @@ router.post('/:id-:name/apply',function(req,res)
 	let id = config.functions.mongooseId(req.params.id);
 	if(!id)
 	{
-		res.locals.single = true;
-		res.render('project-404');
+		res.locals.projects = [];
+		res.render('project-listing');
 		return;
 	}
 	Application.findOne()
@@ -327,72 +329,65 @@ router.post('/:id-:name/apply',function(req,res)
 			req.session.applicationData = req.body;
 			req.flash('warning',`You have already applied to <strong>${results.project}</strong>.`)
 			res.redirect(`/profile/application/${req.params.id}/edit?containsData=1`);
+			return;
 		}
-		else
+		Project
+			.findById(id)
+			.lean()
+			.exec()
+			.then(function(project)
 		{
-			Project
-				.findById(id)
-				.lean()
-				.exec()
-				.then(function(project)
+			if(!config.functions.canRenderProject(project,req.user))
 			{
-				if(!config.functions.canRenderProject(project,req.user))
+				res.locals.content="<h1 class='center'>Access Denied</h1><p class='flow-text'>You don't have permission to apply to this project</p>"
+				res.status(403).render('card');
+				return;
+			}
+			if(!project)
+			{
+				console.warn(`Could not find project ${id}`)
+				res.locals.projects = [];
+				res.render('project-listing');
+			}
+			req.checkBody('level-of-interest','Level of Interest is required')
+				.notEmpty()
+				.isInt()
+				.between(1,10).withMessage('Level of interest is on a scale of 1-10');
+			req.checkBody('availability','availability is required')
+				.notEmpty()
+				.isInt()
+				.between(0,20).withMessage('You must be available between 0 and 20 hours a week');
+			req.checkBody('ranking',"Ranking the frameworks and languages is required")
+				.notEmpty()
+				.isInt()
+				.between(1,100).withMessage('Ranking the frameworks and languages is on a scale of 1-100');
+			req.getValidationResult().then(function(result)
+			{
+				//There are errors
+				if(!result.isEmpty())
 				{
-					res.locals.content="<h1 class='center'>Access Denied</h1><p class='flow-text'>You don't have permission to apply to this project</p>"
-					res.status(403).render('card');
+					res.locals.errors = result.mapped(); //@todo check if submitted data is persistant for the user
+					res.render('project-apply');
 					return;
 				}
-				if(project)
-				{
-					req.checkBody('level-of-interest','Level of Interest is required')
-						.notEmpty()
-						.isInt()
-						.between(1,10).withMessage('Level of interest is on a scale of 1-10');
-					req.checkBody('availability','availability is required')
-						.notEmpty()
-						.isInt()
-						.between(0,20).withMessage('You must be available between 0 and 20 hours a week');
-					req.checkBody('ranking',"Ranking the frameworks and languages is required")
-						.notEmpty()
-						.isInt()
-						.between(1,100).withMessage('Ranking the frameworks and languages is on a scale of 1-100');
-					req.getValidationResult().then(function(result)
-					{
-						//There are errors
-						if(!result.isEmpty())
-						{
-							res.locals.errors = result.mapped(); //@todo check if submitted data is persistant for the user
-							res.render('project-apply');
-						}
-						else
-						{
-							//Create new app
-							let application = new Application();
+				//Create new app
+				let application = new Application();
 
-							//Set app data
-							application["project-id"] = req.params.id; //We already know the project exists
-							application["user-id"] = req.user._id;
-							application["level-of-interest"] = req.sanitize('level-of-interest').toInt();
-							application["skills"] = req.sanitize('ranking').toInt();
-							application["time"] = req.sanitize('availability').toInt();
-							application["notes"] = req.sanitize('notes').escapeAndTrim();
-							application["status"] = 0;
-							application["statusNotes"] = "Waiting for review";
-							application.save().then(function()
-							{
-								res.redirect(`/profile/application/${application._id}`);
-							}).catch((err)=>{res.status(500).render('error',{error:err})});
-						}
-					});
-				}
-				else
+				//Set app data
+				application["project-id"] = req.params.id; //We already know the project exists
+				application["user-id"] = req.user._id;
+				application["level-of-interest"] = req.sanitize('level-of-interest').toInt();
+				application["skills"] = req.sanitize('ranking').toInt();
+				application["time"] = req.sanitize('availability').toInt();
+				application["notes"] = req.sanitize('notes').escapeAndTrim();
+				application["status"] = 0;
+				application["statusNotes"] = "Waiting for review";
+				application.save().then(function()
 				{
-					console.warn(`Could not find project ${id}`)
-					res.locals.single = true;
-					res.render('project-404');
-				}
+					res.redirect(`/profile/application/${application._id}`);
+				}).catch((err)=>{res.status(500).render('error',{error:err})});
 			});
-		}
+		});
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 

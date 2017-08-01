@@ -25,7 +25,7 @@ router.get('/',function(req, res)
 //@todo: normalize query (see / logic)
 router.get('/:offset',function(req,res)
 {
-	if(!parseInt(req.params.offset))
+	if(!req.params.offset.match(/^\d+$/))
 	{
 		//assume the input was meant for project and move on with life
 		res.redirect(`/project/${req.params.offset}`);

@@ -137,9 +137,10 @@ router.get('/applications',function(req,res)
 		.exec()
 		.then(function(applications)
 	{
+		res.locals.applications = applications || [];
 		if(!applications.length)
 		{
-			res.render('application-404');
+			res.render('profile-application-list');
 			return;
 		}
 		if(res.locals.back && (res.locals.back.name == "Your Applications"))
@@ -151,7 +152,6 @@ router.get('/applications',function(req,res)
 		{
 			req.session.back = {name:"Your Applications",url:"/profile/applications"};
 		}
-		res.locals.applications = applications;
 		Application.count()
 			.where('user-id').equals(req.user._id)
 			.lean()
@@ -178,7 +178,8 @@ router.get('/application/:id/view',function(req,res)
 	res.locals.single = true;
 	if(!id)
 	{
-		res.render('application-404');
+		res.locals.applications = [];
+		res.render('profile-application-list');
 		return;
 	}
 	Application.findById(id)
@@ -190,7 +191,8 @@ router.get('/application/:id/view',function(req,res)
 	{
 		if(!application)
 		{
-			res.render('application-404');
+			res.locals.applications = [];
+			res.render('profile-application-list');
 			return;
 		}
 		let project = application['project-id'];
@@ -216,7 +218,8 @@ router.get('/application/:id/edit',function(req,res)
 	res.locals.single = true;
 	if(!id)
 	{
-		res.render('application-404');
+		res.locals.applications = [];
+		res.render('profile-application-list');
 		return;
 	}
 	Application.findById(id)
@@ -228,7 +231,8 @@ router.get('/application/:id/edit',function(req,res)
 	{
 		if(!application)
 		{
-			res.render('application-404');
+			res.locals.applications = [];
+			res.render('profile-application-list');
 			return;
 		}
 		if(application.status > 0)
@@ -277,7 +281,8 @@ router.post('/application/:id/edit',function(req,res)
 		delete req.session.applicationData;
 	if(!id)
 	{
-		res.render('application-404');
+		res.locals.applications = [];
+		res.render('profile-application-list');
 		return;
 	}
 	Application.findById(id)
@@ -288,7 +293,8 @@ router.post('/application/:id/edit',function(req,res)
 	{
 		if(!application)
 		{
-			res.render('application-404');
+			res.locals.applications = [];
+			res.render('profile-application-list');
 			return;
 		}
 		if(application.status > 0)
@@ -351,7 +357,7 @@ router.get('/projects',function(req,res)
 		.exec()
 		.then(function(projects)
 	{
-		res.locals.projects = projects;
+		res.locals.projects = projects || [];
 		res.locals.header = "Your Projects";
 		res.locals.title = "Your Projects";
 		res.render('project-listing');
@@ -367,6 +373,7 @@ router.get('/submitted',function(req,res)
 		.exec()
 		.then(function(user)
 	{
+		user.owner = user.owner || [];
 		res.locals.header = `Your submitted projects`;
 		res.locals.title = `Your submitted projects`;
 		res.locals.projects = user.owner;
@@ -392,7 +399,7 @@ router.get('/:id/projects/submitted',function(req,res)
 		.exec()
 		.then(function(user)
 		{
-			if(user.isPublic)
+			if(user && user.isPublic)
 			{
 				res.locals.errorHeader = "This feature is not available";
 				res.locals.errorMessage = "We would love to show you projects this user has submitted, but the logistics are the works! This might show up in the future!";
@@ -400,7 +407,7 @@ router.get('/:id/projects/submitted',function(req,res)
 			}
 			else
 			{
-				res.locals.userData = user;
+				res.locals.userData = {gid:-1,isPublic:false};
 				res.render('profile');
 			}
 		}).catch((e)=>{res.status(500).render('error',{error:e})});
@@ -434,6 +441,12 @@ router.get('/:id/projects/assigned',function(req,res)
 				.exec()
 				.then(function(applications)
 			{
+				if(!applications)
+				{
+					res.locals.applications = [];
+					res.render('profile-application-list');
+					return;
+				}
 				let projects = [];
 				applications.forEach(function(application)
 				{

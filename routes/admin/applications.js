@@ -36,7 +36,7 @@ router.get('/approved',function(req,res)
 });
 router.get('/approved/:offset',function(req,res)
 {
-	if(!parseInt(req.params.offset))
+	if(!req.params.offset.match(/^\d+$/))
 	{
 		//assume the input was meant for application and move on with life
 		res.redirect(`/admin/application/${req.params.offset}`);
@@ -70,7 +70,7 @@ router.get('/unapproved',function(req,res)
 });
 router.get('/unapproved/:offset',function(req,res)
 {
-	if(!parseInt(req.params.offset))
+	if(!req.params.offset.match(/^\d+$/))
 	{
 		//assume the input was meant for application and move on with life
 		res.redirect(`/admin/application/${req.params.offset}`);
@@ -91,7 +91,7 @@ router.get('/unapproved/:offset',function(req,res)
 //@todo: normalize query (see / logic)
 router.get('/:offset',function(req,res)
 {
-	if(!parseInt(req.params.offset))
+	if(!req.params.offset.match(/^\d+$/))
 	{
 		//assume the input was meant for application and move on with life
 		res.redirect(`/admin/application/${req.params.offset}`);

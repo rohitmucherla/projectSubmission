@@ -7,8 +7,7 @@ router.use(config.functions.requireAdminLogin);
 
 router.get('/',function(req, res)
 {
-	res.locals.page = '/admin/project';
-	res.status(404).render('404');
+	res.redirect('/admin/projects');
 });
 
 router.get('/:id',function(req,res)
@@ -17,7 +16,8 @@ router.get('/:id',function(req,res)
 	if(!id)
 	{
 		res.locals.single = true;
-		res.render('project-404');
+		res.locals.projects = [];
+		res.render('project-listing');
 		return;
 	}
 	res.redirect(`/project/${id}`);

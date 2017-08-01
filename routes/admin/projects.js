@@ -37,9 +37,11 @@ router.get('/approved',function(req,res)
 
 router.get('/approved/:offset',function(req,res)
 {
-	if(!parseInt(req.params.offset))
+	if(!req.params.offset.match(/^\d+$/))
 	{
-		res.status(404).render('404');
+		res.locals.projects = [];
+		res.locals.title = "Error";
+		res.status(404).render('project-listing');
 		return;
 	}
 
@@ -73,9 +75,11 @@ router.get('/unapproved',function(req,res)
 
 router.get('/unapproved/:offset',function(req,res)
 {
-	if(!parseInt(req.params.offset))
+	if(!req.params.offset.match(/^\d+$/))
 	{
-		res.status(404).render('404');
+		res.locals.projects = [];
+		res.locals.title = "Error";
+		res.status(404).render('project-listing');
 		return;
 	}
 
@@ -94,9 +98,11 @@ router.get('/unapproved/:offset',function(req,res)
 
 router.get('/:offset',function(req,res)
 {
-	if(!parseInt(req.params.offset))
+	if(!req.params.offset.match(/^\d+$/))
 	{
-		res.status(404).render('404');
+		res.locals.projects = [];
+		res.locals.title = "Error";
+		res.status(404).render('project-listing');
 		return;
 	}
 

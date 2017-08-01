@@ -1,11 +1,13 @@
 {{#unless single}}<h1 class="center">{{#if header}}{{header}}{{else}}Your{{/if}} applications</h1>{{/unless}}
 <div class="application-container section">
 	{{#if admin}}
-	<ul class="tabs container center admin-project custom">
-		<li class="tab col s4"><a class="{{#if active.all}}active{{/if}}" href="/admin/applications/">All</a></li>
-		<li class="tab col s4"><a class="{{#if active.approved}}active{{/if}}" href="/admin/applications/approved">Approved</a></li>
-		<li class="tab col s4"><a class="{{#if active.unapproved}}active{{/if}}" href="/admin/applications/unapproved">Unapproved</a></li>
-	</ul>
+		{{#unless single}}
+		<ul class="tabs container center admin-project custom">
+			<li class="tab col s4"><a class="{{#if active.all}}active{{/if}}" href="/admin/applications/">All</a></li>
+			<li class="tab col s4"><a class="{{#if active.approved}}active{{/if}}" href="/admin/applications/approved">Approved</a></li>
+			<li class="tab col s4"><a class="{{#if active.unapproved}}active{{/if}}" href="/admin/applications/unapproved">Unapproved</a></li>
+		</ul>
+		{{/unless}}
 	{{/if}}
 	{{#each applications}}
 		<div class="container section application">
@@ -18,10 +20,12 @@
 					</div>
 					{{/if}}
 					<div class="row">
+						{{#unless ../admin}}
 						<div class="col s12 center m4 push-m8">
 							<a class="flow-text btn red" href="/project/{{this.project-id._id}}">View Project</a>
 						</div>
-						<div class="col s12 m4 offset-m4 pull-m4">
+						{{/unless}}
+						<div class="col s12 m4 {{#if ../admin}}push-m4{{else}}offset-m4 pull-m4{{/if}}">
 							<h2 class="flow-text center underlined"><strong>{{this.project-id.name}}</strong> Application</h2>
 						</div>
 					</div>
@@ -52,6 +56,13 @@
 						<p class="flow-text">See a problem? <a href="/profile/application/{{this._id}}/edit" class="btn">Edit Application</a></p>
 					</div>
 					{{/unless}}
+					{{#if ../single}}
+						{{#if ../admin}}
+							{{> admin_project project=this.project-id user=this.user-id}}
+						{{/if}}
+					{{else}}
+						<p class="center"><a class="btn waves-effect waves-light" href="/admin/application/{{this._id}}/view">More details</a></p>
+					{{/if}}
 				</div>
 			</div>
 		</div>

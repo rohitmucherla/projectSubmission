@@ -1,0 +1,42 @@
+<div class="divider"></div>
+<h1 class="center">Project details</h1>
+<p class="center"><a href="/admin/project/{{project._id}}" target="_blank">View project</a></p>
+<div class="row valign-wrapper">
+	<div class="col s6 center valign">
+		{{#if project.paid}}
+			<p class="green-text text-darken-2">Paid</p>
+		{{else}}
+			<p>Not Paid</p>
+		{{/if}}
+	</div>
+	<div class="col s6 right valign">
+		<p class="center">{{project.developers.length}}/{{project.numberOfPeople}} spots taken</p>
+	</div>
+</div>
+<div class="row chips-container valign-wrapper center">
+	<div class="col s12 valign">
+		Languages &amp; Frameworks:
+		{{#each project.languages}}
+			<div class="chip"><a href="/lang/{{this}}" target="_blank">{{{this}}}</a></div>
+		{{else}}
+			[none]
+		{{/each}}
+	</div>
+</div>
+<div class="center section container">
+	<p class="flow-text"><span class="title"><strong>Abstract:</strong></span> {{{project.abstract}}}</p>
+</div>
+<div class="center section container">
+	<p class="flow-text"><span class="title"><strong>Description:</strong></span> {{{project.description}}}</p>
+</div>
+<div class="divider"></div>
+<h1 class="center">User details</h1>
+<p class="center"><a href="/admin/user/{{user.gid}}" target="_blank">View profile</a></p>
+<ul class="center">
+	<li>Name: {{user.name.full}}</li>
+	<li>{{#unless user.approved}}Not {{/unless}}Approved</li>
+	<li>Owns {{user.owner.length}} projects</li>
+	<li>Develops {{user.workingOn.length}} projects</li>
+	<li>Profile is {{#unless user.profileComplete}}not {{/unless}}complete</li>
+	<li>Company: {{user.company}}</li>
+</ul>

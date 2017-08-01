@@ -24,6 +24,8 @@ mongoose.connect(config.db.conn,config.db.options) //connect to db in the config
 * Register helpers
 */
 
+hbs.registerPartials(__dirname + '/views/partials');
+
 hbs.registerHelper('get_slug',function(unslug)
 {
 	return getSlug(unslug);
@@ -106,6 +108,7 @@ let app = express();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
+//app.enable('view cache');
 app.set('view engine', 'hbs');
 
 /*

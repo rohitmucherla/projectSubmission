@@ -85,7 +85,16 @@ functions = {
 				res.redirect('/auth/google');
 			}
 		}
-		else next();
+		else
+		{
+			if(req.user.access >= 0)
+				next();
+			else
+			{
+				res.locals.content="<h1 class='center'>Access Denied</h1><p class='flow-text center'>An admin has deleted your account</p>"
+    			res.status(403).render('card');
+			}
+		}
 	},
 	mongooseId: function(attempt)
 	{

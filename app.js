@@ -192,6 +192,11 @@ app.use(passport.session());
 
 app.use(function(req, res, next)
 {
+	if(req.user && req.user.access < 0)
+	{
+		res.locals.content="<h1 class='center'>Access Denied</h1><p class='flow-text center'>An admin has deleted your account</p>"
+		res.status(403).render('card');
+	}
 	res.locals.user = req.user;
 	res.locals.back = req.session.back || undefined;
 	delete req.session.back;

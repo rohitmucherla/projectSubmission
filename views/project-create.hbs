@@ -10,6 +10,7 @@
 			</div>
 		{{/if}}
 		<form method="post" class="col s12 card-content section" id="project-create">
+			<input type='hidden' name="_csrf" value="{{token}}" />
 			<div class="row">
 				<div class="input-field col s12 m6">
 					<input required type="text" name="name" autocomplete="off" value="{{errors.name.value}}" />

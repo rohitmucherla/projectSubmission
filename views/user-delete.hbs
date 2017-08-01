@@ -3,7 +3,7 @@
 		<h1 class="center">Are you sure you want to delete {{userData.name.full}}'s profile?</h1>
 		<p class="flow-text center">This action cannot be undone, and might bring tears to someone's eyes</p>
 		<form method="post" class='section center'>
-			<input type="hidden" name="delete">
+			<input type='hidden' name="_csrf" value="{{token}}" />
 			<input type='submit' class="center btn red waves-effect waves-light" value="Yes, I'm sure!" />
 		</form>
 	</div>

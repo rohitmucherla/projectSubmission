@@ -1,5 +1,6 @@
 const express = require('express'),
-	console = require('tracer').colorConsole();
+	console = require('tracer').colorConsole(),
+	csurf = require('csurf'),
 	config = require('./config'),
 	getSlug = require('speakingurl'),
 	hbs = require('hbs'),
@@ -119,6 +120,8 @@ app.set('view engine', 'hbs');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
+//CSRF Protection
+app.use(csurf());
 //parses forms
 app.use(bodyParser.urlencoded({ extended: false }));
 //parses cookies
@@ -183,10 +186,12 @@ app.use(function(req, res, next)
 	res.locals.user = req.user;
 	res.locals.back = req.session.back || undefined;
 	delete req.session.back;
+	delete res.locals.back; //@todo implement this everywhere or get rid of it
 	res.locals.config =
 	{
 		slack: config.slack
 	};
+	res.locals.token = req.csrfToken();
 	next();
 });
 

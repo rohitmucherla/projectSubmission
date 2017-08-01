@@ -13,6 +13,7 @@
 		<div class='card-content'>
 			<h1 class="center section">{{#if edit}}Update application {{else}}Apply{{/if}} for {{project.name}}</h1>
 			<form method="post" class="col s12" id="project-apply">
+				<input type='hidden' name="_csrf" value="{{token}}" />
 				<div class="row">
 					<div class="range-field col s12 m9">
 						<label for="level-of-interest" class="flow-text">Level of Interest (1-10)<span class="required red-text"> *</span></label>

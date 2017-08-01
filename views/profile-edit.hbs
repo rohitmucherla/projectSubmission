@@ -24,6 +24,7 @@
 					</div>
 				{{/if}}
 				<form class="center" action="/profile/edit" method="post">
+					<input type='hidden' name="_csrf" value="{{token}}" />
 					<div class="row">
 						<div class="input-field col s12 m12">
 							<input autofocus type="text" name="headline" pattern=".{10,120}" value="{{#if errors}}{{{errors.headline.value}}}{{else}}{{{user.headline}}}{{/if}}" class="charcount validate" data-length="120" />

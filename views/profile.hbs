@@ -1,76 +1,78 @@
 {{#unless user.approved}}
 	<div class="error red-text flow-text center">Your profile is not approved. Your actions are limited</div>
 {{/unless}}
-{{#if (canRenderUser userData user)}}
-{{#if (sameUser user userData)}}
-<div class="fixed-action-btn">
-	<a class="btn-floating btn-large red accent-4 waves-effect hoverable" href="/profile/edit"><i class="large material-icons">mode_edit</i></a>
-</div>
-{{/if}}
-<div class="profile-main container">
-	<div class="card">
+{{#if userData}}
+	{{#if (canRenderUser userData user)}}
 		{{#if (sameUser user userData)}}
-			<a class="right circle center profile-edit waves-effect" href="/profile/edit"><i class="material-icons">edit</i></a>
+		<div class="fixed-action-btn">
+			<a class="btn-floating btn-large red accent-4 waves-effect hoverable" href="/profile/edit"><i class="large material-icons">mode_edit</i></a>
+		</div>
 		{{/if}}
-		<div class="card-content container">
-			<div class="profile-wrapper">
-				<p class="center"><img src="{{userData.pic}}" alt="{{userData.name.full}}'s profile picture" class="circle responsive-img user-profile-image z-depth-5 hoverable"/></p>
-				<p class="center large"><strong>{{userData.name.full}}</strong></p>
-				{{#if userData.headline}}
-					<p class="center headline">{{{userData.headline}}}</p>
-				{{else}}
-					{{#if (sameUser user userData)}}
-						<p class="center headline">(No Headline) &nbsp;<a href="/profile/edit#headline">Edit</a></p>
-					{{/if}}
+		<div class="profile-main container">
+			<div class="card">
+				{{#if (sameUser user userData)}}
+					<a class="right circle center profile-edit waves-effect" href="/profile/edit"><i class="material-icons">edit</i></a>
 				{{/if}}
-				<div class="center outlinks">
-					{{#if userData.github}}
-						<a class="outlink-container logo-github" href="https://github.com/{{userData.github}}" target="_blank" title="{{userData.name.first}}'s github profile ({{userData.github}})">Github</a>
-					{{else}}
-						{{#if (sameUser user userData)}}
-						<span class="outlink-container">(No GitHub) &nbsp;<a href="/profile/edit#github">Edit</a></span>
+				<div class="card-content container">
+					<div class="profile-wrapper">
+						<p class="center"><img src="{{userData.pic}}" alt="{{userData.name.full}}'s profile picture" class="circle responsive-img user-profile-image z-depth-5 hoverable"/></p>
+						<p class="center large"><strong>{{userData.name.full}}</strong></p>
+						{{#if userData.headline}}
+							<p class="center headline">{{{userData.headline}}}</p>
+						{{else}}
+							{{#if (sameUser user userData)}}
+								<p class="center headline">(No Headline) &nbsp;<a href="/profile/edit#headline">Edit</a></p>
+							{{/if}}
 						{{/if}}
-					{{/if}}
-					{{#if userData.slack}}
-						<a class="outlink-container logo-slack" href="https://{{config.slack}}.slack.com/team/{{userData.slack}}" title="{{userData.name.first}} on slack ({{userData.slack}}" target="_blank">Slack</a>
-					{{else}}
-						{{#if (sameUser user userData)}}
-						<span class="outlink-container">(No Slack) &nbsp;<a href="/profile/edit#slack">Edit</a></span>
+						<div class="center outlinks">
+							{{#if userData.github}}
+								<a class="outlink-container logo-github" href="https://github.com/{{userData.github}}" target="_blank" title="{{userData.name.first}}'s github profile ({{userData.github}})">Github</a>
+							{{else}}
+								{{#if (sameUser user userData)}}
+								<span class="outlink-container">(No GitHub) &nbsp;<a href="/profile/edit#github">Edit</a></span>
+								{{/if}}
+							{{/if}}
+							{{#if userData.slack}}
+								<a class="outlink-container logo-slack" href="https://{{config.slack}}.slack.com/team/{{userData.slack}}" title="{{userData.name.first}} on slack ({{userData.slack}}" target="_blank">Slack</a>
+							{{else}}
+								{{#if (sameUser user userData)}}
+								<span class="outlink-container">(No Slack) &nbsp;<a href="/profile/edit#slack">Edit</a></span>
+								{{/if}}
+							{{/if}}
+							{{#if userData.website}}
+								<a class="outlink-container nopadhelp" href="{{userData.website}}" target="_blank" title="{{userData.name.first}}'s website"><span class="outlink-hide"><i class="logo-website material-icons">link</i></span> Website</a>
+							{{else}}
+								{{#if (sameUser user userData)}}
+								<span class="outlink-container">(No Website) &nbsp;<a href="/profile/edit#website">Edit</a></span>
+								{{/if}}
+							{{/if}}
+						</div>
+						<p class="center company section">
+						{{#if userData.company}}
+						<i class="material-icons tiny profile-work">work</i> {{userData.company}}
+						{{else}}
+							{{#if (sameUser user userData)}}
+								(No Company) &nbsp;<a href="/profile/edit#company">Edit</a>
+							{{/if}}
 						{{/if}}
-					{{/if}}
-					{{#if userData.website}}
-						<a class="outlink-container nopadhelp" href="{{userData.website}}" target="_blank" title="{{userData.name.first}}'s website"><span class="outlink-hide"><i class="logo-website material-icons">link</i></span> Website</a>
-					{{else}}
-						{{#if (sameUser user userData)}}
-						<span class="outlink-container">(No Website) &nbsp;<a href="/profile/edit#website">Edit</a></span>
-						{{/if}}
-					{{/if}}
-				</div>
-				<p class="center company section">
-				{{#if userData.company}}
-				<i class="material-icons tiny profile-work">work</i> {{userData.company}}
-				{{else}}
-					{{#if (sameUser user userData)}}
-						(No Company) &nbsp;<a href="/profile/edit#company">Edit</a>
-					{{/if}}
-				{{/if}}
-				</p>
-				<div class="row section center">
-					<div class="col {{#if (sameUser user userData)}}s12 m4{{else}}s12 m3{{/if}}"><a href="/profile/{{userData.gid}}/projects/submitted" class="btn center red accent-4 waves-effect waves-light">Submitted Projects</a></div>
-					<div class="col {{#if (sameUser user userData)}}s12 m4{{else}}s12 m3{{/if}}"><a href="/profile/{{userData.gid}}/projects/assigned" class="btn center red accent-4 waves-effect waves-light">Assigned Projects</a></div>
-					{{#if (sameUser user userData)}}
-					<div class="col s12 m3"><a href="/profile/applications" class="btn center red accent-4 waves-effect waves-light">Applications</a></div>
-					{{/if}}
+						</p>
+						<div class="row section center">
+							<div class="col {{#if (sameUser user userData)}}s12 m4{{else}}s12 m3{{/if}}"><a href="/profile/{{userData.gid}}/projects/submitted" class="btn center red accent-4 waves-effect waves-light">Submitted Projects</a></div>
+							<div class="col {{#if (sameUser user userData)}}s12 m4{{else}}s12 m3{{/if}}"><a href="/profile/{{userData.gid}}/projects/assigned" class="btn center red accent-4 waves-effect waves-light">Assigned Projects</a></div>
+							{{#if (sameUser user userData)}}
+							<div class="col s12 m3"><a href="/profile/applications" class="btn center red accent-4 waves-effect waves-light">Applications</a></div>
+							{{/if}}
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
-</div>
-{{else}}
-<div class="container section">
-	<div class="card">
-		<div class="card-content center flow-text"><strong>This user has privatized their profile.</strong></div>
-		<p class="center"><img class="responsive-img materialboxed materialboxedcenter" alt="Locked door (hidden)" src="/img/hidden.jpg" /></p><br/>
-	</div>
-</div>
+	{{else}}
+		<div class="container section">
+			<div class="card">
+				<div class="card-content center flow-text"><strong>This user has privatized their profile.</strong></div>
+				<p class="center"><img class="responsive-img materialboxed materialboxedcenter" alt="Locked door (hidden)" src="/img/hidden.jpg" /></p><br/>
+			</div>
+		</div>
+	{{/if}}
 {{/if}}

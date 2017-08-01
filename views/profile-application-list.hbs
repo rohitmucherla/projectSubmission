@@ -56,16 +56,18 @@
 						<p class="flow-text">See a problem? <a href="/profile/application/{{this._id}}/edit" class="btn">Edit Application</a></p>
 					</div>
 					{{/unless}}
-					{{#if ../single}}
-						{{#if ../admin}}
+					{{#if ../admin}}
+						{{#if ../single}}
 							{{> admin_project project=this.project-id user=this.user-id}}
-						{{/if}}
-					{{else}}
+						{{else}}
 						<p class="center"><a class="btn waves-effect waves-light" href="/admin/application/{{this._id}}/view">More details</a></p>
+						{{/if}}
 					{{/if}}
 				</div>
 			</div>
 		</div>
+	{{else}}
+	<p class="flow-text center">No Applications found</p>
 	{{/each}}
 </div>
 {{#if pagination.needed}}

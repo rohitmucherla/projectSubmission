@@ -18,17 +18,7 @@ router.get('/',function(req, res)
 		res.locals.header = "All";
 		res.locals.active = {all:true};
 		res.render('profile-application-list');
-	}).catch(function(error)
-	{
-		if(error == 'NO_APPLICATIONS_FOUND')
-		{
-			res.render('application-404');
-		}
-		else
-		{
-			res.status(500).render('error',{error:error});
-		}
-	});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 router.get('/approved',function(req,res)
 {
@@ -42,17 +32,7 @@ router.get('/approved',function(req,res)
 		res.locals.title = "Approved Applications";
 		res.locals.header = "Approved";
 		res.render('profile-application-list');
-	}).catch(function(error)
-	{
-		if(error == 'NO_APPLICATIONS_FOUND')
-		{
-			res.render('application-404');
-		}
-		else
-		{
-			res.status(500).render('error',{error:error});
-		}
-	});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 router.get('/approved/:offset',function(req,res)
 {
@@ -72,17 +52,7 @@ router.get('/approved/:offset',function(req,res)
 		res.locals.title = `Page ${req.params.offset} - Approved Applications (Page ${req.params.offset})`;
 		res.locals.header = `Approved`;
 		res.render('profile-application-list');
-	}).catch(function(error)
-	{
-		if(error == 'NO_APPLICATIONS_FOUND')
-		{
-			res.render('application-404');
-		}
-		else
-		{
-			res.status(500).render('error',{error:error});
-		}
-	});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 router.get('/unapproved',function(req,res)
 {
@@ -96,17 +66,7 @@ router.get('/unapproved',function(req,res)
 		res.locals.title = "Unapproved Applications";
 		res.locals.header = "Unapproved";
 		res.render('profile-application-list');
-	}).catch(function(error)
-	{
-		if(error == 'NO_APPLICATIONS_FOUND')
-		{
-			res.render('application-404');
-		}
-		else
-		{
-			res.status(500).render('error',{error:error});
-		}
-	});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 router.get('/unapproved/:offset',function(req,res)
 {
@@ -126,17 +86,7 @@ router.get('/unapproved/:offset',function(req,res)
 		res.locals.title = `Page ${req.params.offset} - Unapproved Applications`;
 		res.locals.header = "Unapproved";
 		res.render('profile-application-list');
-	}).catch(function(error)
-	{
-		if(error == 'NO_APPLICATIONS_FOUND')
-		{
-			res.render('application-404');
-		}
-		else
-		{
-			res.status(500).render('error',{error:error});
-		}
-	});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 //@todo: normalize query (see / logic)
 router.get('/:offset',function(req,res)
@@ -158,17 +108,7 @@ router.get('/:offset',function(req,res)
 		res.locals.title = `Page ${req.params.offset} - Applications`;
 		res.locals.header = `All`
 		res.render('profile-application-list');
-	}).catch(function(error)
-	{
-		if(error == 'NO_APPLICATIONS_FOUND')
-		{
-			res.render('application-404');
-		}
-		else
-		{
-			res.status(500).render('error',{error:error});
-		}
-	});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
 module.exports = router;

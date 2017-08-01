@@ -35,7 +35,7 @@ function queryProject(page, limit, user, admin, status)
 			//Make sure querying will return a project
 			if(number <= 0 || (offset * limit > number))
 			{
-				reject('NO_PROJECTS_FOUND');
+				resolve({"projects":[]});
 			}
 			else
 			{

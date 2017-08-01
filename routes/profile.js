@@ -351,17 +351,10 @@ router.get('/projects',function(req,res)
 		.exec()
 		.then(function(projects)
 	{
-		if(projects.length)
-		{
-			res.locals.projects = projects;
-			res.locals.header = "Your Projects";
-			res.locals.title = "Your Projects";
-			res.render('project-listing');
-		}
-		else
-		{
-			res.render('project-404');
-		}
+		res.locals.projects = projects;
+		res.locals.header = "Your Projects";
+		res.locals.title = "Your Projects";
+		res.render('project-listing');
 	}).catch((err)=>{res.status(500).render('error',{error:err})});
 });
 
@@ -449,17 +442,10 @@ router.get('/:id/projects/assigned',function(req,res)
 						projects.push(application['project-id']);
 					}
 				});
-				if(projects.length)
-				{
-					res.locals.projects = projects;
-					res.locals.title = `${user.name.first}'s Projects`
-					res.locals.header = `${user.name.first}'s Projects`
-					res.render('project-listing');
-				}
-				else
-				{
-					res.render('project-404');
-				}
+				res.locals.projects = projects;
+				res.locals.title = `${user.name.first}'s Projects`
+				res.locals.header = `${user.name.first}'s Projects`
+				res.render('project-listing');
 			})
 		}
 	})
@@ -478,15 +464,8 @@ router.get('/:id',function(req,res)
 		.exec()
 		.then(function(user)
 	{
-		if(user)
-		{
-			res.locals.userData = user;
-			res.render('profile');
-		}
-		else
-		{
-			res.render('user-404');
-		}
+		res.locals.userData = (user && user.isPublic) ? user : null;
+		res.render('profile');
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 

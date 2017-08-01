@@ -19,17 +19,7 @@ router.get('/',function(req, res)
 		}
 		res.locals.title = "Projects";
 		res.render('project-listing');
-	}).catch((error) =>
-	{
-		if(error == 'NO_PROJECTS_FOUND')
-		{
-			res.render('project-404');
-		}
-		else
-		{
-			res.status(500).render('error',{error:error});
-		}
-	});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
 //@todo: normalize query (see / logic)
@@ -50,17 +40,7 @@ router.get('/:offset',function(req,res)
 		}
 		res.locals.title = `Page ${req.params.offset} - Projects`;
 		res.render('project-listing');
-	}).catch(function(error)
-	{
-		if(error == 'NO_PROJECTS_FOUND')
-		{
-			res.render('project-404');
-		}
-		else
-		{
-			res.status(500).render('error',{error:error});
-		}
-	});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
 module.exports = router;

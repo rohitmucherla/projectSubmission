@@ -13,23 +13,11 @@ router.get('/',function(req, res)
 		{
 			res.locals[key] = projectData[key];
 		}
-		res.locals.active = {
-			all:true
-		};
+		res.locals.active = {all:true};
 		res.locals.header = "Projects";
 		res.locals.title = "Projects";
 		res.render('project-listing');
-	}).catch(function(error)
-	{
-		if(error == 'NO_PROJECTS_FOUND')
-		{
-			res.render('project-404');
-		}
-		else
-		{
-			res.status(500).render('error',{error:error});
-		}
-	});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
 router.get('/approved',function(req,res)
@@ -40,23 +28,11 @@ router.get('/approved',function(req,res)
 		{
 			res.locals[key] = projectData[key];
 		}
-		res.locals.active = {
-			approved:true
-		};
+		res.locals.active = {approved:true};
 		res.locals.header = "Approved Projects";
 		res.locals.title = "Approved Projects";
 		res.render('project-listing');
-	}).catch(function(error)
-	{
-		if(error == 'NO_PROJECTS_FOUND')
-		{
-			res.render('project-404');
-		}
-		else
-		{
-			res.status(500).render('error',{error:error});
-		}
-	});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
 router.get('/approved/:offset',function(req,res)
@@ -73,23 +49,11 @@ router.get('/approved/:offset',function(req,res)
 		{
 			res.locals[key] = projectData[key];
 		}
-		res.locals.active = {
-			approved:true
-		};
+		res.locals.active = {approved:true};
 		res.locals.header = "Approved Projects";
 		res.locals.title = "Approved Projects";
 		res.render('project-listing');
-	}).catch((error) =>
-	{
-		if(error == 'NO_PROJECTS_FOUND')
-		{
-			res.render('project-404');
-		}
-		else
-		{
-			res.status(500).render('error',{error:error});
-		}
-	});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
 router.get('/unapproved',function(req,res)
@@ -100,23 +64,11 @@ router.get('/unapproved',function(req,res)
 		{
 			res.locals[key] = projectData[key];
 		}
-		res.locals.active = {
-			unapproved:true
-		};
+		res.locals.active = {unapproved:true};
 		res.locals.header = "Unapproved Projects";
 		res.locals.title = "Unapproved Projects";
 		res.render('project-listing');
-	}).catch(function(error)
-	{
-		if(error == 'NO_PROJECTS_FOUND')
-		{
-			res.render('project-404');
-		}
-		else
-		{
-			res.status(500).render('error',{error:error});
-		}
-	});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
 router.get('/unapproved/:offset',function(req,res)
@@ -133,23 +85,11 @@ router.get('/unapproved/:offset',function(req,res)
 		{
 			res.locals[key] = projectData[key];
 		}
-		res.locals.active = {
-			unapproved:true
-		};
+		res.locals.active = {unapproved:true};
 		res.locals.header = "Unapproved Projects";
 		res.locals.title = "Unapproved Projects";
 		res.render('project-listing');
-	}).catch((error) =>
-	{
-		if(error == 'NO_PROJECTS_FOUND')
-		{
-			res.render('project-404');
-		}
-		else
-		{
-			res.status(500).render('error',{error:error});
-		}
-	});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
 router.get('/:offset',function(req,res)
@@ -166,23 +106,11 @@ router.get('/:offset',function(req,res)
 		{
 			res.locals[key] = projectData[key];
 		}
-		res.locals.active = {
-			all:true
-		};
+		res.locals.active = {all:true};
 		res.locals.title = "Projects";
 		res.locals.header = "Projects";
 		res.render('project-listing');
-	}).catch((error) =>
-	{
-		if(error == 'NO_PROJECTS_FOUND')
-		{
-			res.render('project-404');
-		}
-		else
-		{
-			res.status(500).render('error',{error:error});
-		}
-	});
+	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
 module.exports = router;

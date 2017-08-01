@@ -36,6 +36,7 @@ router.get('/',function(req, res)
 	res.locals.adminStats = {};
 	User.find()
 		.where('approved').equals('false')
+		.where('access').gte(0)
 		.lean()
 		.count()
 		.exec()
@@ -92,28 +93,13 @@ router.get('/projects',function(req,res)
 
 router.get('/projects/unapproved',function(req,res)
 {
-	Project.find().where('status').equals(0).count().lean().exec().then(function(number)
+	loop(1,config.LIMIT,null,false,true,0).then(function(projectData)
 	{
-		//No projects found
-		if(number <= 0)
+		for(key in projectData)
 		{
-			res.render('project-404');
+			res.locals[key] = projectData[key];
 		}
-		else
-		{
-			//Get the first LIMIT projects
-			Project.find().where('status').equals(0).limit(config.LIMIT).lean().exec().then(function(projects)
-			{
-				//Figure out if we need to paginate, and update pagination info
-				res.locals.pagination = (number > config.LIMIT) ?
-					{needed:true, number: Math.ceil(number / config.LIMIT), current:1} :
-					{needed:false};
-				//set the projects
-				res.locals.projects = projects;
-				//render the projects
-				res.render('project-listing');
-			});
-		}
+		res.render('project-listing');
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 

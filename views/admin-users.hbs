@@ -1,6 +1,12 @@
 <div class="container">
 	<h2 class="center">{{type}} Users</h2>
-	{{#unless type}}<a class="btn" href="/admin/users/unapproved">Unapproved Users</a>{{/unless}}
+	{{#if admin}}
+	<ul class="tabs container center admin-project custom">
+		<li class="tab col s4"><a class="{{#if active.all}}active{{/if}}" href="/admin/users/">All</a></li>
+		<li class="tab col s4"><a class="{{#if active.approved}}active{{/if}}" href="/admin/users/approved">Approved</a></li>
+		<li class="tab col s4"><a class="{{#if active.unapproved}}active{{/if}}" href="/admin/users/unapproved">Unapproved</a></li>
+	</ul>
+	{{/if}}
 	<form action="/admin/users/search{{#if type}}?type={{type}}{{/if}}" method="get">
 		<div class="input-field">
 			<input type="search" name="query" required value="{{search}}"></input>
@@ -24,6 +30,8 @@
 				<a href="/admin/user/{{gid}}/delete" class="red-text text-darken-4"><i class="material-icons">delete</i></a>
 			</div>
 		</li>
+		{{else}}
+		<p class="flow-text center">No users found</p>
 		{{/each}}
 	</ul>
 </div>

@@ -13,6 +13,7 @@ router.get('/',function(req,res)
 		.lean()
 		.limit(config.LIMIT)
 		.select('gid pic name email approved')
+		.where('access').gte(0)
 		.exec()
 		.then(function(users)
 	{
@@ -26,21 +27,16 @@ router.get('/unapproved',function(req,res)
 {
 	User.find()
 		.where('approved').equals(0)
+		.where('access').gte(0)
 		.lean()
 		.select('gid pic name email approved')
 		.exec()
 		.then(function(users)
 	{
-		if(users.length)
-		{
-			res.locals.users = users;
-			res.locals.type = "Unapproved";
-			res.render('admin-users');
-		}
-		else
-		{
-			res.render('user-404');
-		}
+		res.locals.users = users;
+		res.locals.type = "Unapproved";
+		res.locals.active = {unapproved:true}
+		res.render('admin-users');
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
@@ -48,21 +44,16 @@ router.get('/approved',function(req,res)
 {
 	User.find()
 		.where('approved').equals(1)
+		.where('access').gte(0)
 		.lean()
 		.select('gid pic name email approved')
 		.exec()
 		.then(function(users)
 	{
-		if(users.length)
-		{
-			res.locals.users = users;
-			res.locals.type = "Approved";
-			res.render('admin-users');
-		}
-		else
-		{
-			res.render('user-404');
-		}
+		res.locals.users = users;
+		res.locals.type = "Approved";
+		res.locals.active = {approved:true}
+		res.render('admin-users');
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
@@ -78,6 +69,7 @@ router.get('/search',function(req,res)
 		search = new RegExp(req.query.query, "i");
 		User.find()
 		.or([{'name.first':search},{'name.last':search},{'name.full':search}])
+		.where('access').gte(0)
 		.lean()
 		.select('gid pic name email approved')
 		.exec()

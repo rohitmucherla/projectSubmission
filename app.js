@@ -120,8 +120,6 @@ app.set('view engine', 'hbs');
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-//CSRF Protection
-app.use(csurf());
 //parses forms
 app.use(bodyParser.urlencoded({ extended: false }));
 //parses cookies
@@ -176,6 +174,8 @@ app.use(session(
 	//cookie: {secure:true} //@todo: Uncomment when in production
 	//@todo: set store (in-memory store is for development only)
 }));
+//CSRF Protection
+app.use(csurf({ignoreMethods: ['GET','HEAD','OPTIONS']}));
 //Use passport
 app.use(passport.initialize());
 //Passport session manager
@@ -228,6 +228,13 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
+
+	if(err.code === 'EBADCSRFTOKEN')
+	{
+		res.locals.title = "Access Denied";
+		res.status(403).render('csrf-block');
+	}
+
 	// set locals, only providing error in development
 	res.locals.message = err.message;
 	res.locals.error = req.app.get('env') === 'development' ? err : {};

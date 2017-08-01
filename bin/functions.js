@@ -34,7 +34,7 @@ functions = {
 			if(req.method.toLowerCase() == "post" && req.body)
 			{
 				formData = '';
-				blacklist = ['csrf']; //@todo: update
+				blacklist = ['_csrf']; //@todo: update
 				for(el in req.body)
 				{
 					if(blacklist.indexOf(el) < 0)
@@ -70,7 +70,7 @@ functions = {
 			if(req.method.toLowerCase() == "post" && req.body)
 			{
 				formData = '';
-				blacklist = ['csrf']; //@todo: update
+				blacklist = ['_csrf']; //@todo: update
 				for(el in req.body)
 				{
 					if(blacklist.indexOf(el) < 0)

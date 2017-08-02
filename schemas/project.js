@@ -74,12 +74,17 @@ let projectSchema = mongoose.Schema(
 		required: false
 	},
 	status:
-	{
+	{ //-2 = complete, -1 = rejected, 0 = unapproved, 1 = approved, 2 = filled
 		required: true,
 		default: 0,
 		type: Number,
-		min:-1,
+		min:-2,
 		max: 2
+	},
+	statusNotes:
+	{
+		type:String,
+		required:false
 	},
 	organization:
 	{

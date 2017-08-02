@@ -29,29 +29,36 @@ router.get('/:id',function(req,res)
 //Approve user `id`
 router.get('/:id/approve',function(req,res)
 {
+	res.locals.item = {lower:'user',upper:'User'};
+	res.render('wait-csrf');
+});
+
+router.post('/:id/approve',function(req,res)
+{
 	User.findOne()
 		.where('gid').in(req.params.id)
-		.lean()
 		.exec()
 		.then(function(user)
 	{
 		if(!user)
 		{
-			res.render("error",{error:{status:404,message:"User not found."}})
+			res.locals.user = [];
+			res.render('admin-users');
 			return;
 		}
 		if(user.approved)
 		{
-			req.flash('error',`${user.name} is already approved!`)
-			res.render('index');
+			req.flash('error',`${user.name.full} is already approved!`)
+			res.redirect('/admin/users');
+			return;
 		}
 		else
 		{
 			user.approved = true;
 			user.save().then(function()
 			{
-				req.flash('success',`User ${user.name} approved!`);
-				res.render('index');
+				req.flash('success',`User ${user.name.full} approved!`);
+				res.redirect('/admin/users');
 			}).catch((error)=>{res.status(500).render('error',{error:error})});
 		}
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
@@ -68,15 +75,8 @@ router.get('/:id/delete',function(req,res)
 		.exec()
 		.then(function(user)
 		{
-			if(user)
-			{
-				res.locals.userData = user;
-				res.render('user-delete');
-			}
-			else
-			{
-				res.render('user-404');
-			}
+			res.locals.userData = user ? user : null;
+			res.render('user-delete');
 		}).catch((e)=>{res.status(500).render('error',{error:e})});
 });
 
@@ -86,13 +86,53 @@ router.post('/:id/delete',function(req,res)
 		query = {[location]:req.params.id}
 	//@todo add csrf token
 	User.findOne(query)
-		.remove()
+		.populate('workingOn')
+		.populate('owner')
 		.exec()
-		.then(function(b)
+		.then(function(user)
 	{
+		if(!user)
+		{
+			res.locals.user = null;
+			res.render('admin-users');
+			return;
+		}
 		//@todo: Error checking
-		req.flash('success','Deleted User');
-		res.render('index');
+		user.status = -1;
+		user.token = '';
+		user.name = {first:'',last:'',full:''};
+		user.company = '';
+		user.isPublic = false;
+		user.github = null;
+		user.slack = null;
+		user.website = 'https://tamu.edu';
+		user.headline = null;
+		user.access = -1;
+		user.approved = false;
+		user.pic = '/img/transparent.png';
+		user.limit = 0;
+
+		user.workingOn.forEach(function(project)
+		{
+			let index = project.managers.indexOf(user._id);
+			if(index > -1)
+				project.managers.splice(index,1);
+			index = project.developers.indexOf(user._id);
+			if(index > -1)
+				project.developers.splice(index,1);
+			project.save().catch((e)=>{res.status(500).render('error',{error:e})});
+		});
+		user.owner.forEach(function(project)
+		{
+			if(project.owners.length <= 1)
+				Project.findById(project._id).remove().exec().catch((e)=>{res.status(500).render('error',{error:e})});
+		});
+		user.owner = user.workingOn = [];
+		user.save().then(function()
+		{
+			req.flash('success','Deleted User');
+			res.redirect('/admin/users');
+		}).catch((e)=>{res.status(500).render('error',{error:e})})
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 })
 
@@ -106,6 +146,11 @@ router.get('/:id/applications',function(req,res)
 		.exec()
 		.then(function(user)
 	{
+		if(!user)
+		{
+			res.locals.applications = [];
+			res.render('profile-application-list');
+		}
 		Application.find()
 			.lean()
 			.where("user-id").equals(user._id)
@@ -113,13 +158,8 @@ router.get('/:id/applications',function(req,res)
 			.exec()
 			.then(function(applications)
 		{
-			if(!applications.length)
-			{
-				res.render('application-404');
-				return;
-			}
 			//@todo: add pagination
-			res.locals.applications = applications;
+			res.locals.applications = applications ? applications : null;
 			res.locals.header = user.name.full + "'s";
 			res.render('profile-application-list');
 		}).catch((error)=>{res.status(500).render('error',{error:error})});

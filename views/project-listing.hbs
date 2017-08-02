@@ -26,7 +26,7 @@
 					</div>
 					{{else}}
 						{{#if ../admin}}
-							<p class="flow-text green-text center">Project Approved</p>
+							<p class="flow-text {{projectStatus this.status "color"}}-text center">Project {{projectStatus this.status "name"}}</p>
 						{{/if}}
 					{{/if}}
 					{{#unless (public this)}}

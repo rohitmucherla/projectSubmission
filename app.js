@@ -76,6 +76,46 @@ hbs.registerHelper('sameUser',function(userA,userB)
 	return userA.gid == userB.gid;
 });
 
+hbs.registerHelper('projectStatus',function(status = '0', what = 'name')
+{
+	status = status.toString();
+	let statusList =
+	{
+		"-2":
+		{
+			name: 'Rejected',
+			color: 'red'
+		},
+		"-1":
+		{
+			name: 'Complete',
+			color: 'green'
+		},
+		"0":
+		{
+			name: 'Unapproved',
+			color: 'red'
+		},
+		"1":
+		{
+			name: 'Approved',
+			color: 'green'
+		},
+		"2":
+		{
+			name: 'Full',
+			color: 'green'
+		}
+	}
+	if(!statusList[status])
+	{
+		console.error(`Project status ${status} does not exist`);
+		statusList[status] = {name:'Status Unknown',color:'red'};
+	}
+	return statusList[status][what] || 'Status';
+
+});
+
 hbs.registerHelper('renderProjectApproval',function(isAdmin,project)
 {
 	return isAdmin && (project.status == 0)
@@ -247,8 +287,15 @@ app.use(function(err, req, res, next) {
 	{
 		res.locals.title = "Access Denied";
 		res.status(403).render('csrf-block');
+		return;
 	}
 
+	if(err.status == 404)
+	{
+		res.locals.page = req.originalUrl;
+		res.status(404).render('404');
+		return;
+	}
 	// set locals, only providing error in development
 	res.locals.message = err.message;
 	res.locals.error = req.app.get('env') === 'development' ? err : {};

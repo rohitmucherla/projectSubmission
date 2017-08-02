@@ -55,7 +55,7 @@ let projectSchema = mongoose.Schema(
 	{
 		type: Date,
 		required: true,
-		min: Date.now
+		max: Date.now
 	},
 	end:
 	{

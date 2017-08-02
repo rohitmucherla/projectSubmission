@@ -7,7 +7,8 @@ const express = require('express'),
 
 router.get('/',function(req, res)
 {
-	loop(1,config.LIMIT,null,false,true).then(function(projectData)
+	status = req.query.noFilter == '1' ? null:{$gte:-1}
+	loop(1,config.LIMIT,null,false,true,status).then(function(projectData)
 	{
 		for(key in projectData)
 		{
@@ -106,7 +107,8 @@ router.get('/:offset',function(req,res)
 		return;
 	}
 
-	loop(req.params.offset,config.LIMIT,null,false,true).then(function(projectData)
+	status = req.query.noFilter == '1' ? null:{$gte:-1}
+	loop(req.params.offset,config.LIMIT,null,false,true,status).then(function(projectData)
 	{
 		for(key in projectData)
 		{

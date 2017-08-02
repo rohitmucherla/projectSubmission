@@ -65,7 +65,7 @@ router.get('/',function(req, res)
 	}).catch((e)=>{res.status(500).render('error',{error:e})});
 });
 
-router.get('/send-test-email',function(req,res)
+router.post('/send-test-email',function(req,res)
 {
 	mailer(req.user.email,config.email.default.subject,'<strong><center>Test email 1 from Project Submission!</center></strong>').then(function(info)
 	{
@@ -83,40 +83,6 @@ router.get('/send-test-email',function(req,res)
 	{
 		res.locals.content = `<h1 class='center'>First Email - <a class='red-text'>Error</a></h1>: <pre>${error}</pre>`;
 		res.render('card');
-	});
-});
-
-router.get('/projects',function(req,res)
-{
-	res.send('Project for loop');
-});
-
-router.get('/projects/unapproved',function(req,res)
-{
-	loop(1,config.LIMIT,null,false,true,0).then(function(projectData)
-	{
-		for(key in projectData)
-		{
-			res.locals[key] = projectData[key];
-		}
-		res.render('project-listing');
-	}).catch((error)=>{res.status(500).render('error',{error:error})});
-});
-
-router.get('/projects/assigner',function(req,res)
-{
-	Application.find()
-		.lean()
-		.limit(config.LIMIT)
-		.exec()
-		.then(function(app)
-	{
-		app.forEach(function(a,b,c)
-		{
-			console.warn(a,b,c);
-		});
-		res.locals.Application = [app];
-		res.render('admin-project-assigner');
 	});
 });
 

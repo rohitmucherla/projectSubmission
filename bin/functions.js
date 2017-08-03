@@ -109,7 +109,7 @@ functions = {
 		}
 		return ret;
 	},
-	canRenderProject: function(project,user)
+	canRenderProject: function(project,user,admin)
 	{
 		//@todo - check what .map returns - maybe we don't need to allocate an extra array for it.
 		/*
@@ -128,7 +128,7 @@ functions = {
 		});
 		//@endtodo
 		userAccess = allowed.includes(user._id.toString());
-		return project.status == 1 ||  userAccess || (project.status == 0 && functions.isAdmin(user));// || user.access >= 10;
+		return admin || project.status == 1 ||  userAccess || (project.status == 0 && functions.isAdmin(user));// || user.access >= 10;
 	}
 }
 module.exports = functions;

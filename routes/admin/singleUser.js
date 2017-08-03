@@ -159,6 +159,7 @@ router.get('/:id/applications',function(req,res)
 			.then(function(applications)
 		{
 			//@todo: add pagination
+			res.locals.id = user.gid;
 			res.locals.applications = applications ? applications : null;
 			res.locals.header = user.name.full + "'s";
 			res.render('profile-application-list');

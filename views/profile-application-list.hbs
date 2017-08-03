@@ -3,9 +3,9 @@
 	{{#if admin}}
 		{{#unless single}}
 		<ul class="tabs container center admin-project custom">
-			<li class="tab col s4"><a class="{{#if active.all}}active{{/if}}" href="/admin/applications/">All</a></li>
-			<li class="tab col s4"><a class="{{#if active.approved}}active{{/if}}" href="/admin/applications/approved">Approved</a></li>
-			<li class="tab col s4"><a class="{{#if active.unapproved}}active{{/if}}" href="/admin/applications/unapproved">Unapproved</a></li>
+			<li class="tab col s4"><a class="{{#if active.all}}active{{/if}}" href="/admin/applications/{{#if id}}{{id}}/{{/if}}">All</a></li>
+			<li class="tab col s4"><a class="{{#if active.approved}}active{{/if}}" href="/admin/applications/{{#if id}}{{id}}/{{/if}}approved">Approved</a></li>
+			<li class="tab col s4"><a class="{{#if active.unapproved}}active{{/if}}" href="/admin/applications/{{#if id}}{{id}}/{{/if}}unapproved">Unapproved</a></li>
 		</ul>
 		{{/unless}}
 	{{/if}}

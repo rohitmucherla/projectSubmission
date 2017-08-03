@@ -13,7 +13,7 @@ function queryProject(page, limit, user, admin, status)
 		//Get the number of projects in the db
 		//note: this is not an expensive calculation
 		let orParams;
-		if(admin)
+		if(admin && status == null)
 			orParams = [{'status':{$gte:-100}}] //-100 is arbitrary; 0 is probably fine
 		else if(status != null) //status can be 0
 			orParams = [{'status':status}];

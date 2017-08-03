@@ -23,7 +23,7 @@
     "debug": "^2.6.8",
     "express": "^4.15.3",
     "express-flash": "0.0.2",
-    "express-session": "^1.15.4",
+    "express-session": "^1.15.5",
     "express-validator": "^3.2.1",
     "hbs": "~4.0.1",
     "mongodb": "^2.2.30",

@@ -1,14 +1,13 @@
-<div class="container section">
+<div class="profile-main container section">
 	<div class="card">
-		<div class="card-title">
-			<h1 class="center">
-				<img src="{{userData.pic}}" alt="{{userData.name.full}}'s profile pic" class="circle" />
-				{{userData.name.full}}
-			</h1>
-		</div>
 		<div class="card-content">
-			<div class="section" id="meta">
-				<h2>Meta</h2>
+			<div class="profile-wrapper section">
+				<p class="center"><img src="{{userData.pic}}" alt="{{userData.name.full}}'s profile picture" class="circle responsive-img user-profile-image z-depth-5 hoverable"/></p>
+				<p class="center large"><strong>{{userData.name.full}}</strong></p>
+			</div>
+			<div class="divider"></div>
+			<div class="section container" id="meta">
+				<h2 class="center">Meta</h2>
 				{{#if userData.approved}}
 					<p class="green-text flow-text">Approved</p>
 				{{else}}
@@ -21,8 +20,9 @@
 				{{/if}}
 				<p class="flow-text">Profile is {{#unless userData.profileComplete}}in{{/unless}}complete
 			</div>
-			<div class="section" id="projects">
-				<h2>Projects</h2>
+			<div class="divider"></div>
+			<div class="section container" id="projects">
+				<h2 class="center">Projects</h2>
 				<div class="row">
 					<div class="col s12">
 						<ul class="tabs tabs-fixed-width">
@@ -61,6 +61,9 @@
 					</div>
 				</div>
 			</div>
+			<div class="divider"></div>
+			<h2 class="center">Public Profile</h2>
+			{{> profile this}}
 		</div>
 	</div>
 </div>

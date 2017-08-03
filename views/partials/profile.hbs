@@ -1,0 +1,36 @@
+{{#if userData}}
+<div class="profile-main container">
+	<div class="card">
+		<div class="card-content container">
+			<div class="profile-wrapper">
+				<p class="center"><img src="{{userData.pic}}" alt="{{userData.name.full}}'s profile picture" class="circle responsive-img user-profile-image z-depth-5 hoverable"/></p>
+				<p class="center large"><strong>{{userData.name.full}}</strong></p>
+				<p class="center headline">{{#if userData.headline}}{{{userData.headline}}}{{else}}(No Headline){{/if}}</p>
+				<div class="center outlinks">
+					{{#if userData.github}}
+						<a class="outlink-container logo-github" href="https://github.com/{{userData.github}}" target="_blank" title="{{userData.name.first}}'s github profile ({{userData.github}})">Github</a>
+					{{else}}
+						<span class="outlink-container">(No GitHub)</span>
+					{{/if}}
+					{{#if userData.slack}}
+						<a class="outlink-container logo-slack" href="https://{{config.slack}}.slack.com/team/{{userData.slack}}" title="{{userData.name.first}} on slack ({{userData.slack}}" target="_blank">Slack</a>
+					{{else}}
+						<span class="outlink-container">(No Slack)</span>
+					{{/if}}
+					{{#if userData.website}}
+						<a class="outlink-container nopadhelp" href="{{userData.website}}" target="_blank" title="{{userData.name.first}}'s website"><span class="outlink-hide"><i class="logo-website material-icons">link</i></span> Website</a>
+					{{else}}
+						<span class="outlink-container">(No Website)</span>
+					{{/if}}
+				</div>
+				<p class="center company section">{{#if userData.company}}<i class="material-icons tiny profile-work">work</i> {{userData.company}}{{else}}(No Company){{/if}}</p>
+				<div class="row section center">
+					<div class="col s12 m4"><a href="/admin/user/{{userData.gid}}/projects/submitted" class="btn center red accent-4 waves-effect waves-light">Submitted Projects</a></div>
+					<div class="col s12 m4"><a href="/admin/user/{{userData.gid}}/projects/assigned" class="btn center red accent-4 waves-effect waves-light">Assigned Projects</a></div>
+					<div class="col s12 m3"><a href="/admin/user/{{userData.gid}}/applications" class="btn center red accent-4 waves-effect waves-light">Applications</a></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+{{/if}}

@@ -26,7 +26,7 @@ function queryApplication(page, limit, status)
 			//Make sure querying will return a project
 			if(number <= 0 || (offset * limit > number))
 			{
-				reject({applications:[]});
+				resolve({applications:[]});
 			}
 			else
 			{

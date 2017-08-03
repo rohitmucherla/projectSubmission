@@ -29,12 +29,40 @@ router.get('/:id',function(req,res)
 	}
 	Project.findById(id)
 		.lean()
+		.populate('owners','name')
 		.exec()
 		.then(function(project)
 	{
 		res.locals.projects = [project];
 		res.render('project-listing');
 	}).catch((e)=>{res.status(500).render('error',{error:e})});
+});
+
+router.get('/:id/change',function(req,res)
+{
+	let id = config.functions.mongooseId(req.params.id);
+	if(!id)
+	{
+		res.locals.single = true;
+		res.locals.projects = [];
+		res.render('project-listing');
+		return;
+	}
+	Project.findById(id)
+		.lean()
+		.populate('owners','name')
+		.exec()
+		.then(function(project)
+	{
+		project.status = 0;
+		res.locals.projects = [project];
+		res.render('project-listing');
+	}).catch((e)=>{res.status(500).render('error',{error:e})});
+});
+
+router.get('/:id/view',function(req,res)
+{
+	res.redirect(`/admin/project/${req.params.id}`);
 });
 
 router.get('/:id/approve',function(req,res)
@@ -58,10 +86,10 @@ router.post('/:id/approve',function(req,res)
 		.exec()
 		.then(function(project)
 	{
-		if(!project || project.status > 0)
+		if(project.status == 1)
 		{
-			res.locals.project = [];
-			res.render('project-listing');
+			req.flash('warning',`${project.name} is already Approved!`);
+			res.redirect('/admin/projects');
 			return;
 		}
 		project.owners.forEach(function(user)
@@ -71,7 +99,7 @@ router.post('/:id/approve',function(req,res)
 				subject: `Your Project "${project.name}" has been approved`,
 				body: `Hey ${user.name.first},<br/><br/> We just wanted to let you know that your project "${project.name}" has been approved. The project is now public, and anyone can apply to it. Admins will approve / reject applications to work on this project based on a variety of criteria, and if necessary, DM you on slack (<a href='${config.slack}.slack.com/team/${user.slack}'>@${user.slack})</a>.<br/><br/>- The Project Submission Bot`
 			}
-			mailer(options).catch((e)=>{console.error(`Failed to send email to ${user.email} (${user._id}) - project approval - ${project._id}`)});
+			mailer(options).catch((e)=>{console.error(`Failed to send email to ${user.email} (${user._id}) - project approval - ${project._id}`); res.flash('error','Failed to send email to user')});
 		});
 		project.status = 1;
 		project.save().then(function()
@@ -104,17 +132,17 @@ router.post('/:id/reject',function(req,res)
 		.exec()
 		.then(function(project)
 	{
+		if(project.status == 1)
+		{
+			req.flash('warning',`${project.name} is already Rejected`);
+			res.redirect('/admin/projects');
+			return;
+		}
 		let notes = false;
 		if(req.body.why)
 		{
 			notes = config.functions.sanitize(req.body.why);
 			project.statusNotes = notes;
-		}
-		if(!project || project.status > 0)
-		{
-			res.locals.project = [];
-			res.render('project-listing');
-			return;
 		}
 		project.owners.forEach(function(user)
 		{
@@ -123,7 +151,7 @@ router.post('/:id/reject',function(req,res)
 				subject: `Your Project "${project.name}" has been rejected`,
 				body: `Hey ${user.name.first},<br/><br/> We just wanted to let you know that your project "${project.name}" has been rejected. The admin that rejected this project said the following:<br/> ${notes || '[nothing]'}<br/><br/>- The Project Submission Bot`
 			}
-			mailer(options).catch((e)=>{console.error(`Failed to send email to ${user.email} (${user._id}) - project approval - ${project._id}`)});
+			mailer(options).catch((e)=>{console.error(`Failed to send email to ${user.email} (${user._id}) - project approval - ${project._id}`); res.flash('error','Failed to send email to user')});
 		});
 		project.status = -2;
 		project.save().then(function()

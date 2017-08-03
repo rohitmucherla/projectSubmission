@@ -14,7 +14,7 @@
 	{{/if}}
 
 	{{#each projects}}
-		{{#if (canRenderProject this ../user)}}
+		{{#if (canRenderProject this ../user ../admin)}}
 		<div class="container section project">
 			<div class="card">
 				<div class="card-content">
@@ -27,6 +27,7 @@
 					{{else}}
 						{{#if ../admin}}
 							<p class="flow-text {{projectStatus this.status "color"}}-text center">Project {{projectStatus this.status "name"}}</p>
+							<p class="flow-text center"><a href="/admin/project/{{this._id}}/change"><small>Update status</small></a></p>
 						{{/if}}
 					{{/if}}
 					{{#unless (public this)}}
@@ -61,18 +62,24 @@
 						<p class="flow-text"><span class="title"><strong>Abstract:</strong></span> {{{this.abstract}}}</p>
 					</div>
 					{{#if ../single}}
-					<div class="center section container">
-						<p class="flow-text"><span class="title"><strong>Description:</strong></span> {{{this.description}}}</p>
-					</div>
+						<div class="center section container">
+							<p class="flow-text"><span class="title"><strong>Description:</strong></span> {{{this.description}}}</p>
+						</div>
 					{{/if}}
 					<div class="center section">
 						{{#if this.applied}}
-						<p class="flow-text">You've applied to this! <a href="/profile/application/{{this.applied}}/view" class="btn">View Application</a></p>
+							<p class="flow-text">You've applied to this! <a href="/profile/application/{{this.applied}}/view" class="btn">View Application</a></p>
 						{{else}}
 							{{#if ../single}}
-								<p class="flow-text">{{#unless ../admin}}Interested? <a class="btn {{#unless (public this)}}disabled{{/unless}} waves-effect waves-light" href="/project/{{this._id}}-{{get_slug this.name}}/apply">Apply!</a><small><br/>You cannot apply to this project right now <a href="/faq/#unapproved/visibility" target="_blank">Learn More</a></small>{{/unless}}</p>
+								{{#if ../admin}}
+									{{#each this.owners}}
+										<p class="flow-text">Submitted by {{this.name.first}} <a class="btn waves-effect waves-light" href="/admin/user/{{this._id}}" target="_blank">View Profile</a></p>
+									{{/each}}
+								{{else}}
+									<p class="flow-text">Interested? <a class="btn {{#unless (public this)}}disabled{{/unless}} waves-effect waves-light" href="/project/{{this._id}}-{{get_slug this.name}}/apply">Apply!</a><small><br/>You cannot apply to this project right now <a href="/faq/#unapproved/visibility" target="_blank">Learn More</a></small></p>
+								{{/if}}
 							{{else}}
-								<p class="flow-text">{{#unless ../admin}}Interested? {{/unless}}<a class="btn waves-effect waves-light" href="{{#if ../admin}}/admin{{/if}}/project/{{this._id}}-{{get_slug this.name}}/view">View Project{{#unless ../admin}}!{{/unless}}</a></p>
+								<p class="flow-text">{{#unless ../admin}}Interested? {{/unless}}<a class="btn waves-effect waves-light" href="{{#if ../admin}}/admin{{/if}}/project/{{this._id}}{{#unless ../admin}}-{{get_slug this.name}}{{/unless}}/view">View Project{{#unless ../admin}}!{{/unless}}</a></p>
 							{{/if}}
 						{{/if}}
 					</div>

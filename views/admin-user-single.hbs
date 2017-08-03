@@ -26,16 +26,16 @@
 				<div class="row">
 					<div class="col s12">
 						<ul class="tabs tabs-fixed-width">
-							<li class="tab col s4"><a href="#owns">Owns [{{#if userData.owner}} {{userData.owner.length}}{{else}}0{{/if}}]</a></li>
-							<li class="tab col s3"><a href="#manages">Manages [{{#if userData.manager}} {{userData.manager.length}}{{else}}0{{/if}}]</a></li>
-							<li class="tab col s4"><a href="#develops">Works On [{{#if userData.developer}} {{userData.developer.length}}{{else}}0{{/if}}]</a></li>
+							<li class="tab col s4"><a href="#owns">Owns [{{#if userData.owner}}{{userData.owner.length}}{{else}}0{{/if}}]</a></li>
+							<li class="tab col s3"><a href="#manages">Manages [{{#if userData.manager}}{{userData.manager.length}}{{else}}0{{/if}}]</a></li>
+							<li class="tab col s4"><a href="#develops">Works On [{{#if userData.developer}}{{userData.developer.length}}{{else}}0{{/if}}]</a></li>
 						</ul>
 					</div>
 
 				 	<div id="owns" class="col s12">
 				 		<div class="section container center">
 							{{#each userData.owner}}
-								<p class='flow-text'><a href="/project/{{this._id}}">{{this.name}}</a></p>
+								<p class='flow-text'><a href="/admin/project/{{this._id}}">{{this.name}}</a></p>
 							{{else}}
 								<p class='flow-text'>[none]</p>
 							{{/each}}
@@ -44,7 +44,7 @@
 					<div id="manages" class="col s12">
 						<div class="section container center">
 							{{#each userData.manager}}
-								<p class='flow-text'><a href="/project/{{this._id}}">{{this.name}}</a></p>
+								<p class='flow-text'><a href="/admin/project/{{this._id}}">{{this.name}}</a></p>
 							{{else}}
 								<p class='flow-text'>[none]</p>
 							{{/each}}
@@ -53,7 +53,7 @@
 					<div id="develops" class="col s12">
 						<div class="section container center">
 							{{#each userData.developer}}
-								<p class='flow-text'><a href="/project/{{this._id}}">{{this.name}}</a></p>
+								<p class='flow-text'><a href="/admin/project/{{this._id}}">{{this.name}}</a></p>
 							{{else}}
 								<p class='flow-text'>[none]</p>
 							{{/each}}

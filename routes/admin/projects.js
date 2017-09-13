@@ -59,7 +59,7 @@ router.get('/approved/:offset',function(req,res)
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
-router.get('/unapproved',function(req,res)
+router.get('/unapproved|pending',function(req,res)
 {
 	loop(1,config.LIMIT,null,false,false,0).then(function(projectData)
 	{
@@ -74,7 +74,7 @@ router.get('/unapproved',function(req,res)
 	}).catch((error)=>{res.status(500).render('error',{error:error})});
 });
 
-router.get('/unapproved/:offset',function(req,res)
+router.get('/unapproved|pending/:offset',function(req,res)
 {
 	if(!req.params.offset.match(/^\d+$/))
 	{

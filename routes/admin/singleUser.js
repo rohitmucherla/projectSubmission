@@ -55,6 +55,7 @@ router.post('/:id/approve',function(req,res)
 		else
 		{
 			user.approved = true;
+			user.limit = config.LIMIT || 10;
 			user.save().then(function()
 			{
 				req.flash('success',`User ${user.name.full} approved!`);

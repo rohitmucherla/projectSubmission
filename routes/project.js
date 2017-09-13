@@ -49,7 +49,7 @@ router.post('/create',function(req,res)
 		.exec()
 		.then(function(numProjects)
 	{
-		if(req.user.limit < 0 || req.user.limit > numProjects)
+		if(req.user.limit < 0 || req.user.limit <= numProjects)
 		{
 			res.status(403).render('admin-block');
 		}

@@ -55,23 +55,29 @@ router.post('/create',function(req,res)
 		}
 		else
 		{
+			let abstractLength;
+			try {
+				abstractLength = req.body.abstract.length;
+			}
+			catch (E) {
+				abstractLength = 1;
+			}
 			//Validate name
 			req.checkBody('name','Name is required')
 				.notEmpty()
 				.len(2,30).withMessage('Project name must be between 2 and 30 characters');
 			//Validate abstract
 			req.checkBody('abstract','Abstract is required')
-				.notEmpty()
-				.len(100,1000).withMessage('Abstract must be between 100 and 1000 characters');
+				.notEmpty();
 			//Validate description
 			req.checkBody('description','Description is required')
 				.notEmpty()
-				.len(100,100000000).withMessage('Your description is too short');
+				.len(abstractLength,63206).withMessage('Your description should be longer then your abstract');
 			//Validate number of people
 			req.checkBody('number-of-people','Number of people is required')
 				.notEmpty()
 				.isInt()
-				.between(1,10).withMessage('Number of people must be between 0 and 10');
+				.between(1,10).withMessage('Number of people must be between 1 and 10');
 
 			req.getValidationResult().then(function(result)
 			{
@@ -93,9 +99,9 @@ router.post('/create',function(req,res)
 					project.description = req.sanitize('description').escapeAndTrim();
 					project.abstract = req.sanitize('abstract').escapeAndTrim();
 					project.owners = [config.functions.mongooseId(req.user._id)]; //As array
-					project.created = Date.now() + 15; //Add 15ms for execution time
+					project.created = Date.now();
 					project.languages =  (langs == "") ? [] : langs;
-					project.status = 0; //Unapproved
+					project.status = 0; // Unapproved
 					project.paid = req.body.paid == "on" ? 1 : 0;
 					project.numberOfPeople = req.sanitize('number-of-people').toInt();
 					project.save().then(function()

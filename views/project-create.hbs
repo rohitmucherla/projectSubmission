@@ -30,12 +30,12 @@
 				</div>
 			</div>
 			<div class="input-field">
-				<input required type="text" class="charcount" name="abstract" data-length="1000" value="{{errors.abstract.value}}" pattern=".{100,1000}"/>
-				<label for="abstract">Project Abstract (100 - 1000 characters) <span class="required red-text">*</span></label>
+				<input required type="text" class="charcount" name="abstract" data-length="1000" value="{{errors.abstract.value}}" pattern=".{1,1000}"/>
+				<label for="abstract">Project Abstract (up to 1000 characters) <span class="required red-text">*</span></label>
 			</div>
 			<div class="input-field">
-				<textarea required name="description" class="materialize-textarea" value="{{errors.description.value}}" minlength="100"></textarea>
-				<label for="description">Project description (1000+ characters) <span class="required red-text">*</span></label>
+				<textarea required name="description" class="materialize-textarea" value="{{errors.description.value}}"></textarea>
+				<label for="description">Project description <span class="required red-text">*</span></label>
 			</div>
 			<div clas="input-field">
 				<label for="langs">Programming languages and frameworks used (press enter to add another)</label>

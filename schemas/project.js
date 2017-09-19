@@ -14,13 +14,11 @@ let projectSchema = mongoose.Schema(
 	description:
 	{
 		type:String,
-		min:[100,'Your description is too short'],
 		required:[true,'A description is required']
 	},
 	abstract:
 	{
 		type:String,
-		min:[100,'Your abstract is too short'],
 		max:[1000,'Your abstract is too long'],
 		required:[true,'An abstract is required']
 	},

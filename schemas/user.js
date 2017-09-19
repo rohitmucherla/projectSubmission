@@ -44,7 +44,7 @@ let userSchema = mongoose.Schema(
 	{
 		type:String,
 		default:undefined,
-		minlength:10,
+		minlength:5,
 		maxlength:120
 	},
 	access: {required:true, type:Number, default: 0},

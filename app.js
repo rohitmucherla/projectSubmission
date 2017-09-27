@@ -234,8 +234,10 @@ app.use(function(req, res, next)
 {
 	if(req.user && req.user.access < 0)
 	{
+		if(["/login", "/logout", "/auth/login", "/auth/logout"].includes(req.path))
+			return next();
 		res.locals.content="<h1 class='center'>Access Denied</h1><p class='flow-text center'>An admin has deleted your account</p>"
-		res.status(403).render('card');
+		return res.status(403).render('card');
 	}
 	res.locals.user = req.user;
 	res.locals.back = req.session.back || undefined;
